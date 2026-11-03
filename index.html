@@ -1,0 +1,594 @@
+<title>산초 포트폴리오 허브</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: 흰 바탕의 한 페이지. 상단 고정 내비, 왼쪽 정렬 히어로, 3열 카드 그리드(휴대폰 1열). */
+:root {
+  --bg: #f7f7f8;
+  --card: #ffffff;
+  --surface: #f3f3f5;
+  --fg: #1d1d1f;
+  --muted: #707075;
+  --line: #ececef;
+  --dash: #d2d2d7;
+  --accent: #1d1d1f;
+  --accent-ink: #ffffff;
+  --accent-soft: #ececf0;
+  --glass: rgba(247, 247, 248, 0.72);
+  --btn-bg: #1d1d1f;
+  --btn-ink: #ffffff;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.03), 0 12px 40px rgba(0, 0, 0, 0.05);
+
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, "Malgun Gothic", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161618;
+    --card: #232326;
+    --surface: #2c2c30;
+    --fg: #f5f5f7;
+    --muted: #a1a1a6;
+    --line: #38383c;
+    --dash: #505055;
+    --accent: #f5f5f7;
+    --accent-ink: #161618;
+    --accent-soft: #2c2c30;
+    --glass: rgba(22, 22, 24, 0.72);
+    --shadow: 0 0 0 rgba(0, 0, 0, 0);
+    --btn-bg: #f5f5f7;
+    --btn-ink: #161618;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161618;
+  --card: #232326;
+  --surface: #2c2c30;
+  --fg: #f5f5f7;
+  --muted: #a1a1a6;
+  --line: #38383c;
+  --dash: #505055;
+  --accent: #f5f5f7;
+  --accent-ink: #161618;
+  --accent-soft: #2c2c30;
+  --glass: rgba(22, 22, 24, 0.72);
+  --shadow: 0 0 0 rgba(0, 0, 0, 0);
+  --btn-bg: #f5f5f7;
+  --btn-ink: #161618;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  z-index: 10;
+}
+
+.in {
+  width: 100%;
+  max-width: 1152px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+h1, h2, h3, p, dl, dd, ol { margin: 0; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.3; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+.mono { font-family: var(--font-mono); letter-spacing: 0.04em; }
+
+/* ---------- 상단 내비 ---------- */
+.top {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--line);
+}
+.top .in { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.brand-mark {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 4px 9px;
+  border-radius: 8px;
+}
+.gnb { display: flex; gap: 28px; font-size: 15px; font-weight: 500; color: var(--muted); }
+.gnb a { position: relative; transition: color .18s ease; }
+.gnb a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; background: var(--btn-bg); transform: scaleX(0); transform-origin: left; transition: transform .2s ease; }
+.gnb a:hover { color: var(--fg); }
+.gnb a:hover::after { transform: scaleX(1); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font: inherit; font-weight: 700; font-size: 16px;
+  padding: 13px 26px;
+  border-radius: 999px;
+  border: 0;
+  cursor: pointer;
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  gap: 8px;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.btn .arrow { display: inline-block; transition: transform .18s ease; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16); }
+.btn:hover .arrow { transform: translateX(4px); }
+.btn:active { transform: translateY(0) scale(.97); box-shadow: none; }
+.btn.sm { padding: 9px 16px; font-size: 15px; }
+@media (max-width: 760px) { .gnb { display: none; } }
+
+/* ---------- 섹션 공통 ---------- */
+section { scroll-margin-top: 84px; padding-block: 52px 8px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 20px; }
+.sec-head h2 { font-size: 1.5rem; font-weight: 700; }
+.sec-head .aside { color: var(--muted); font-size: 15px; }
+.label { font-family: var(--font-mono); font-size: 13px; letter-spacing: .06em; color: var(--accent); font-weight: 700; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 28px;
+  min-width: 0;
+  transition: transform .35s cubic-bezier(.22, .61, .36, 1), box-shadow .35s cubic-bezier(.22, .61, .36, 1);
+}
+.work:hover, .skill:hover { transform: translateY(-4px); box-shadow: 0 16px 44px rgba(0, 0, 0, 0.08); }
+
+/* ---------- 30초 탐색 ---------- */
+.quick { padding-block: 24px 0; }
+.quick-box { background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 24px; padding: 16px 18px 18px; }
+.quick-box .label { color: var(--muted); display: block; margin-bottom: 10px; }
+.quick ol { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.quick a {
+  display: block; text-align: center; font-weight: 700; font-size: 16px;
+  padding: 12px 8px; border-radius: 999px; background: var(--surface); border: 1px solid transparent;
+}
+.quick a { transition: background .18s ease, color .18s ease, transform .18s ease; }
+.quick a:hover { background: var(--btn-bg); color: var(--btn-ink); transform: translateY(-2px); }
+.quick a:hover span { color: inherit; opacity: .7; }
+.quick a span { font-family: var(--font-mono); color: var(--muted); margin-right: 6px; font-weight: 500; }
+@media (max-width: 620px) { .quick ol { grid-template-columns: 1fr; } }
+
+/* ---------- 1. 첫 화면 ---------- */
+#first-screen { padding-block: 56px 8px; }
+.kicker {
+  display: inline-block;
+  font-family: var(--font-mono); font-size: 13px; letter-spacing: .05em; font-weight: 700;
+  color: var(--accent); background: var(--accent-soft);
+  padding: 6px 14px; border-radius: 999px;
+}
+.hero h1 { font-size: clamp(2.25rem, 6.4vw, 3.9rem); font-weight: 700; letter-spacing: -0.03em; margin-top: 18px; }
+.hero h1 { color: var(--fg); font-weight: 500; }
+.hero h1 em { font-style: normal; font-weight: 900; color: var(--fg); }
+.hero .message { font-size: clamp(1.25rem, 2.6vw, 1.65rem); font-weight: 700; line-height: 1.5; margin-top: 18px; max-width: 28em; text-wrap: balance; color: var(--fg); }
+.mark {
+  background: linear-gradient(var(--btn-bg), var(--btn-bg)) no-repeat 0 100% / 100% 3px;
+  padding: 0 3px;
+  margin: 0 -3px;
+  border-radius: 3px;
+  display: inline-block;
+  overflow: hidden;
+  width: 13em;
+  max-width: 100%;
+  vertical-align: bottom;
+  line-height: 1.5;
+  transition: background-size .3s ease, color .3s ease;
+  animation: sweep .9s .25s ease backwards;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.hero .message:hover .mark { background-size: 100% 100%; color: var(--btn-ink); }
+@keyframes sweep { from { background-size: 0% 3px; } to { background-size: 100% 3px; } }
+.mark-text { display: inline-block; transition: transform .8s cubic-bezier(.22, .61, .36, 1); }
+.mark-text.out { transform: translateY(105%); }
+.mark-text.pre { transform: translateY(-105%); transition: none; }
+.hero .proof { color: var(--muted); margin-top: 18px; max-width: 40em; padding-top: 16px; border-top: 1px solid var(--line); }
+.hero .cta { margin-top: 26px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; }
+.progress { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 15px; }
+.progress .bars { display: flex; gap: 4px; }
+.progress .bars i { width: 22px; height: 8px; border-radius: 2px; background: var(--line); }
+.progress .bars i.on { background: var(--btn-bg); }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.hero .in > * { animation: rise .8s cubic-bezier(.22, .61, .36, 1) backwards; }
+.hero .in > :nth-child(2) { animation-delay: .08s; }
+.hero .in > :nth-child(3) { animation-delay: .16s; }
+.hero .in > :nth-child(4) { animation-delay: .24s; }
+.hero .in > :nth-child(5) { animation-delay: .32s; }
+
+/* ---------- 2. 소개 ---------- */
+.about-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+@media (max-width: 860px) { .about-grid { grid-template-columns: 1fr; } }
+.facts { display: grid; gap: 16px; margin-top: 12px; }
+.fact dt { font-size: 14px; color: var(--muted); }
+.fact dd { font-size: 1.2rem; font-weight: 700; margin-top: 2px; }
+.fact dd.ph { font-weight: 400; font-size: 1rem; color: var(--muted); }
+.stack-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; }
+.stack-head h3 { font-size: 1.15rem; }
+.stack-head span { font-size: 14px; color: var(--muted); }
+.chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 16px; }
+.chip {
+  font: inherit; font-weight: 700; font-size: 16px; color: var(--fg);
+  background: var(--surface); border: 1px solid transparent; border-radius: 16px;
+  padding: 14px 12px; cursor: pointer; text-align: left;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.chip { transition: background .18s ease, color .18s ease, transform .18s ease; }
+.chip:hover { background: var(--btn-bg); color: var(--btn-ink); transform: translateY(-2px); }
+.chip:hover small { color: var(--btn-ink); opacity: .7; }
+.chip:active { transform: scale(.97); }
+.chip small { font-family: var(--font-mono); font-weight: 500; font-size: 12px; color: var(--muted); }
+
+/* ---------- 3. 역량 ---------- */
+.skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 900px) { .skills { grid-template-columns: 1fr; } }
+.skill h3 { font-size: 1.15rem; margin-top: 10px; }
+.skill p { color: var(--muted); margin-top: 10px; }
+
+/* ---------- 4. 결과물 ---------- */
+.works { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 960px) { .works { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .works { grid-template-columns: 1fr; } }
+.work { display: flex; flex-direction: column; gap: 16px; }
+.work-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.day { font-family: var(--font-mono); font-weight: 700; font-size: 13px; letter-spacing: .08em; padding: 4px 12px; border-radius: 999px; background: var(--surface); color: var(--muted); }
+.work.done .day { background: var(--accent); color: var(--accent-ink); }
+.status { font-size: 14px; color: var(--muted); }
+.work.done .status { color: var(--accent); font-weight: 700; }
+.work h3 { font-size: 1.15rem; }
+.rows { display: grid; gap: 14px; background: var(--surface); border-radius: 18px; padding: 18px; }
+.rows dt { font-size: 14px; font-weight: 700; color: var(--muted); }
+.rows dd { margin-top: 2px; min-height: 1.65em; overflow-wrap: anywhere; }
+.rows dd.ph { color: var(--muted); }
+.work:not(.done) .rows dd { border-bottom: 1px dashed var(--dash); }
+
+/* ---------- 5. 연락 ---------- */
+.contact { display: grid; grid-template-columns: 1fr auto; gap: 20px 32px; align-items: center; }
+@media (max-width: 760px) { .contact { grid-template-columns: 1fr; } }
+.contact h3 { font-size: 1.25rem; }
+.contact p { color: var(--muted); margin-top: 6px; }
+.mail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.mail code {
+  font-family: var(--font-mono); font-size: 15px; background: var(--surface);
+  padding: 12px 14px; border-radius: 10px; user-select: all; overflow-wrap: anywhere; min-width: 0;
+}
+.copied { min-height: 1.5em; font-size: 15px; color: var(--accent); margin-top: 10px; }
+
+footer { margin-top: 64px; border-top: 1px solid var(--line); padding-block: 28px 36px; color: var(--muted); font-size: 14px; }
+
+/* ---------- 모달 ---------- */
+.scrim { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background: rgba(8, 16, 24, .55); }
+.scrim[hidden] { display: none !important; }
+.dialog { width: 100%; max-width: 400px; background: var(--card); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28); color: var(--fg); border: 1px solid var(--line); border-radius: 28px; padding: 24px; display: grid; gap: 18px; }
+.dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.dialog-head h4 { margin: 0; font-size: 1.2rem; }
+.x { font: inherit; font-size: 18px; background: none; border: 0; color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+.x:hover { color: var(--fg); }
+.level-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: var(--muted); }
+.level-row b { color: var(--accent); font-family: var(--font-mono); }
+.meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+.meter i { height: 14px; border-radius: 3px; background: var(--line); }
+.meter i.on { background: var(--accent); }
+.dialog p { margin: 0; background: var(--surface); border-radius: 10px; padding: 14px; }
+</style>
+
+<header class="top">
+  <div class="in">
+    <a class="brand" href="#first-screen"><span class="brand-mark">HUB</span><span>산초의 포트폴리오</span></a>
+    <nav class="gnb" aria-label="페이지 이동">
+      <a href="#first-screen">첫 화면</a>
+      <a href="#about">소개</a>
+      <a href="#skills">역량</a>
+      <a href="#works">결과물</a>
+      <a href="#contact">연락</a>
+    </nav>
+    <a class="btn sm" href="#works">결과물 보기</a>
+  </div>
+</header>
+
+<main>
+  <div class="quick">
+    <div class="in">
+      <div class="quick-box">
+        <span class="label">30초 빠른 탐색</span>
+        <ol>
+          <li><a href="#first-screen"><span>1</span>첫 화면</a></li>
+          <li><a href="#about"><span>2</span>소개</a></li>
+          <li><a href="#skills"><span>3</span>역량</a></li>
+          <li><a href="#works"><span>4</span>결과물</a></li>
+          <li><a href="#contact"><span>5</span>연락</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <section id="first-screen" class="hero">
+    <div class="in">
+      <span class="kicker">[희망 회사·산업] [직무] 지원자</span>
+      <h1>안녕하세요, <em>산초</em>입니다.</h1>
+      <p class="message">감각적인 디자인으로 <span class="mark"><span class="mark-text">사용자 경험을 향상하는</span></span> 웹개발자입니다.</p>
+      <p class="proof">최근 청년일경험사업을 통해 커넥팅더닷츠 째깍섬 UI/UX 개선 프로젝트를 진행하였으며, 현재 현대자동차그룹 HINT 2기 수료 중입니다.</p>
+      <div class="cta">
+        <a class="btn" href="#works">결과물 보기 <span class="arrow" aria-hidden="true">→</span></a>
+        <div class="progress" aria-label="결과물 6칸 중 1칸 작성">
+          <span class="bars" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span>
+          <span>결과물 카드를 매일 한 장씩 채우는 중</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="in">
+      <div class="sec-head"><h2>소개</h2><span class="aside">전공과 주요 스택</span></div>
+      <div class="about-grid">
+        <div class="card">
+          <span class="label">전공 · 관심 분야</span>
+          <dl class="facts">
+            <div class="fact"><dt>전공</dt><dd>컴퓨터공학전공</dd></div>
+            <div class="fact"><dt>관심 분야</dt><dd class="ph">[관심 분야]</dd></div>
+          </dl>
+        </div>
+        <div class="card">
+          <div class="stack-head">
+            <h3>주요 스택</h3>
+            <span>기술을 누르면 숙련도 단계를 볼 수 있습니다</span>
+          </div>
+          <div class="chips">
+            <button class="chip" type="button" data-name="JavaScript" data-level="1" data-desc="ES6+ 문법 기초를 이해하고 비동기 처리와 모듈화된 코드를 작성해 보는 단계입니다.">JavaScript <small>Lv1</small></button>
+            <button class="chip" type="button" data-name="TypeScript" data-level="1" data-desc="기본 타입을 정의해 안정적인 코드를 작성하며 인터페이스 활용을 익혀가는 단계입니다.">TypeScript <small>Lv1</small></button>
+            <button class="chip" type="button" data-name="Kotlin" data-level="1" data-desc="Android 네이티브 기본 구조를 이해하고 간단한 앱 화면과 로직을 작성해보는 단계입니다.">Kotlin <small>Lv1</small></button>
+            <button class="chip" type="button" data-name="Java" data-level="1" data-desc="객체지향 문법 기초를 활용해 기본 앱 구성 요소와 생명주기를 파악해보는 단계입니다.">Java <small>Lv1</small></button>
+            <button class="chip" type="button" data-name="Python" data-level="1" data-desc="AI 도구 연동 기초와 간단한 자동화 스크립트를 작성해 보는 단계입니다.">Python <small>Lv1</small></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="in">
+      <div class="sec-head"><h2>역량</h2><span class="aside">핵심 강점 3가지</span></div>
+      <div class="skills">
+        <article class="card skill">
+          <span class="label">강점 1</span>
+          <h3>Android 네이티브 앱 설계 및 생명주기 관리</h3>
+          <p>Kotlin과 Java를 활용해 모바일 앱 생명주기와 비동기 처리를 안정적으로 구현하고 설계할 수 있습니다.</p>
+        </article>
+        <article class="card skill">
+          <span class="label">강점 2</span>
+          <h3>타입 안전성과 모듈화를 고려한 모던 웹 개발</h3>
+          <p>JavaScript 및 TypeScript를 도입하여 유지보수가 쉽고 오류 발생 가능성을 줄인 구조화된 코드를 작성합니다.</p>
+        </article>
+        <article class="card skill">
+          <span class="label">강점 3</span>
+          <h3>AI 연동 및 스크립트를 활용한 문제 해결력</h3>
+          <p>Python을 활용해 업무에 필요한 간단한 자동화 스크립트를 제작하거나 AI 도구를 프로젝트에 연동해 작업 효율성을 극대화합니다.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="works">
+    <div class="in">
+      <div class="sec-head"><h2>결과물</h2><span class="aside">6일 동안 하루 한 장씩 채우는 카드</span></div>
+      <div class="works">
+
+        <article class="card work done">
+          <div class="work-top"><span class="day">DAY 1</span><span class="status">작성 완료</span></div>
+          <h3>디지털 트레이닝 AI 활용</h3>
+          <dl class="rows">
+            <div><dt>문제</dt><dd>AI 도구를 여러 종류의 과제에 직접 써 보며 활용 방법을 익히는 것</dd></div>
+            <div><dt>내가 한 일</dt><dd>AI로 유튜브 영상을 분석하고, 음악을 만들고, 보고서를 제작했습니다.</dd></div>
+            <div><dt>사용 기술</dt><dd>Gemini, GPT, Claude</dd></div>
+            <div><dt>결과</dt><dd>영상 분석, 음악, 보고서 결과물을 AI와 함께 완성했습니다.</dd></div>
+          </dl>
+        </article>
+
+        <article class="card work">
+          <div class="work-top"><span class="day">DAY 2</span><span class="status">작성 대기</span></div>
+          <h3>Day 2 결과물 자리</h3>
+          <dl class="rows">
+            <div><dt>문제</dt><dd></dd></div>
+            <div><dt>내가 한 일</dt><dd></dd></div>
+            <div><dt>사용 기술</dt><dd></dd></div>
+            <div><dt>결과</dt><dd></dd></div>
+          </dl>
+        </article>
+
+        <article class="card work">
+          <div class="work-top"><span class="day">DAY 3</span><span class="status">작성 대기</span></div>
+          <h3>Day 3 결과물 자리</h3>
+          <dl class="rows">
+            <div><dt>문제</dt><dd></dd></div>
+            <div><dt>내가 한 일</dt><dd></dd></div>
+            <div><dt>사용 기술</dt><dd></dd></div>
+            <div><dt>결과</dt><dd></dd></div>
+          </dl>
+        </article>
+
+        <article class="card work">
+          <div class="work-top"><span class="day">DAY 4</span><span class="status">작성 대기</span></div>
+          <h3>Day 4 결과물 자리</h3>
+          <dl class="rows">
+            <div><dt>문제</dt><dd></dd></div>
+            <div><dt>내가 한 일</dt><dd></dd></div>
+            <div><dt>사용 기술</dt><dd></dd></div>
+            <div><dt>결과</dt><dd></dd></div>
+          </dl>
+        </article>
+
+        <article class="card work">
+          <div class="work-top"><span class="day">DAY 5</span><span class="status">작성 대기</span></div>
+          <h3>Day 5 결과물 자리</h3>
+          <dl class="rows">
+            <div><dt>문제</dt><dd></dd></div>
+            <div><dt>내가 한 일</dt><dd></dd></div>
+            <div><dt>사용 기술</dt><dd></dd></div>
+            <div><dt>결과</dt><dd></dd></div>
+          </dl>
+        </article>
+
+        <article class="card work">
+          <div class="work-top"><span class="day">DAY 6</span><span class="status">작성 대기</span></div>
+          <h3>Day 6 결과물 자리</h3>
+          <dl class="rows">
+            <div><dt>문제</dt><dd></dd></div>
+            <div><dt>내가 한 일</dt><dd></dd></div>
+            <div><dt>사용 기술</dt><dd></dd></div>
+            <div><dt>결과</dt><dd></dd></div>
+          </dl>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="in">
+      <div class="sec-head"><h2>연락</h2></div>
+      <div class="card contact">
+        <div>
+          <h3>프로젝트 문의 및 채용 제안</h3>
+          <p>아래 주소로 문의를 남겨 주시면 확인 후 답장드리겠습니다.</p>
+          <div class="copied" id="copied" role="status" aria-live="polite"></div>
+        </div>
+        <div class="mail">
+          <code id="mail-address">1545thgml@naver.com</code>
+          <button class="btn" type="button" id="copy-mail">이메일 주소 복사</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="in">© Sancho Portfolio Hub. 6-Day Development Challenge.</div>
+</footer>
+
+<div class="scrim" id="stack-modal" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="dialog-head">
+      <h4 id="modal-title">기술명</h4>
+      <button class="x" type="button" id="modal-x" aria-label="닫기">✕</button>
+    </div>
+    <div>
+      <div class="level-row"><span>숙련도 단계</span><b id="modal-level">Level 1 / 4</b></div>
+      <div class="meter" id="modal-meter"><i></i><i></i><i></i><i></i></div>
+    </div>
+    <p id="modal-desc"></p>
+    <button class="btn" type="button" id="modal-ok">확인</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var modal = document.getElementById('stack-modal');
+  var lastFocus = null;
+
+  function openModal(btn) {
+    var level = parseInt(btn.getAttribute('data-level'), 10) || 1;
+    document.getElementById('modal-title').textContent = btn.getAttribute('data-name');
+    document.getElementById('modal-level').textContent = 'Level ' + level + ' / 4';
+    document.getElementById('modal-desc').textContent = btn.getAttribute('data-desc');
+    var bars = document.querySelectorAll('#modal-meter i');
+    for (var i = 0; i < bars.length; i++) bars[i].className = (i < level) ? 'on' : '';
+    lastFocus = btn;
+    modal.hidden = false;
+    document.getElementById('modal-ok').focus();
+  }
+  function closeModal() {
+    modal.hidden = true;
+    if (lastFocus) lastFocus.focus();
+  }
+
+  var chips = document.querySelectorAll('.chip');
+  for (var c = 0; c < chips.length; c++) {
+    chips[c].addEventListener('click', function (e) { openModal(e.currentTarget); });
+  }
+  document.getElementById('modal-x').addEventListener('click', closeModal);
+  document.getElementById('modal-ok').addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+  var note = document.getElementById('copied');
+  function selectAddress() {
+    var r = document.createRange();
+    r.selectNodeContents(document.getElementById('mail-address'));
+    var s = window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+  }
+  document.getElementById('copy-mail').addEventListener('click', function () {
+    var text = document.getElementById('mail-address').textContent;
+    var btn = document.getElementById('copy-mail');
+    var done = function () {
+      note.textContent = '이메일 주소를 복사했습니다.';
+      btn.textContent = '복사됨';
+      setTimeout(function () { btn.textContent = '이메일 주소 복사'; }, 1800);
+    };
+    var fail = function () { selectAddress(); note.textContent = '주소를 선택했습니다. 직접 복사해 주세요.'; };
+    try {
+      navigator.clipboard.writeText(text).then(done, fail);
+    } catch (err) {
+      fail();
+    }
+  });
+
+  /* 한 줄 문구의 강조 부분이 차례로 바뀝니다. 글자는 여기서 고칠 수 있습니다. */
+  var phrases = [
+    '사용자 경험을 향상하는',
+    'UI/UX를 개선하는',
+    '타입 안전성을 고려하는',
+    '유지보수가 쉬운 코드를 쓰는',
+    'AI를 연동해 문제를 푸는'
+  ];
+  var mark = document.querySelector('.mark-text');
+  var message = document.querySelector('.hero .message');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (mark && message && !reduce) {
+    var idx = 0;
+    var paused = false;
+    message.addEventListener('mouseenter', function () { paused = true; });
+    message.addEventListener('mouseleave', function () { paused = false; });
+    setInterval(function () {
+      if (paused || document.hidden) return;
+      mark.classList.add('out');
+      setTimeout(function () {
+        idx = (idx + 1) % phrases.length;
+        mark.textContent = phrases[idx];
+        mark.classList.add('pre');
+        mark.classList.remove('out');
+        void mark.offsetWidth;
+        mark.classList.remove('pre');
+      }, 820);
+    }, 4800);
+  }
+})();
+</script>
