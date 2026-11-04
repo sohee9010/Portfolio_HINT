@@ -488,6 +488,17 @@ section { scroll-margin-top: 84px; padding-block: clamp(72px, 9vw, 120px) 0; }
 .play-cover .play-icon { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: var(--brand); box-shadow: 0 10px 30px var(--brand-glow); transition: transform .2s ease; }
 .play-cover:hover .play-icon { transform: scale(1.08); }
 .play-cover small { font-size: 13px; opacity: .75; }
+/* 자율주행 딜레마: 밤 도로 3차선 표지 */
+.dilemma-cover {
+  display: grid; place-items: center;
+  background-color: #2A2E38;
+  background-image: repeating-linear-gradient(180deg, rgba(236, 230, 212, .55) 0 22px, transparent 22px 44px), repeating-linear-gradient(180deg, rgba(236, 230, 212, .55) 0 22px, transparent 22px 44px);
+  background-size: 3px 100%, 3px 100%; background-position: 33.3% 0, 66.6% 0; background-repeat: no-repeat;
+}
+.dz { display: grid; gap: 8px; justify-items: center; text-align: center; padding: 18px 26px; border-radius: 14px; background: rgba(19, 21, 27, .88); border: 1px solid #D8463B; color: #F5F2EA; }
+.dz-alert { font-size: 14px; font-weight: 800; color: #D8463B; }
+.dz b { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; color: #FFB21E; }
+.dz small { font-size: 13px; opacity: .75; }
 
 /* ---------- 5. 연락 ---------- */
 .contact { display: grid; grid-template-columns: 1fr auto; gap: 20px 32px; align-items: center; }
@@ -673,9 +684,9 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
               <span class="label">AUTOMATION · 웹앱</span>
               <h3>HINT 포트폴리오 자동화 기록</h3>
               <p class="featured-meta">2026.11 · 개인 프로젝트 · 현대자동차그룹 HINT 실습</p>
-              <p class="featured-desc">HINT에서 매일 배우고 만든 것을 한 장의 카드로 정리하는 웹앱입니다. 달력에서 날짜를 고르고 문제 · 내가 한 일 · 사용 기술 · 결과를 적어 확정하면, 포트폴리오 허브의 'HINT 여정'에 올릴 기록이 완성됩니다.</p>
-              <p class="featured-result">기록을 입력 · 목록 · 요약 화면으로 나누고 교육 진행 일수를 함께 보여 줘, 60일 과정 동안 하루도 빠짐없이 남길 수 있게 했습니다.</p>
-              <div class="tags"><span>Google Apps Script</span><span>JavaScript</span><span>업무 자동화</span></div>
+              <p class="featured-desc">노션에 정리한 내용을 포트폴리오에 다시 옮겨 적고 HTML을 직접 고쳐 배포하던 '이중 기록'을 없애려고 만든 웹앱입니다. 달력에서 날짜를 고르고 문제 · 내가 한 일 · 사용 기술 · 결과를 적어 확정하면, GitHub API로 이 사이트에 카드가 자동으로 올라갑니다.</p>
+              <p class="featured-result">[확정] 한 번이면 1~2분 안에 'HINT 여정'에 반영되고, 올리기·삭제는 비밀번호로 잠가 공개 링크에서도 안전하게 쓸 수 있게 했습니다. 확정한 카드 수와 빠뜨린 날도 한눈에 볼 수 있습니다.</p>
+              <div class="tags"><span>Google Apps Script</span><span>Google Sheets</span><span>GitHub API</span><span>Notion API</span></div>
               <div class="work-links">
                 <a class="btn sm" href="https://script.google.com/macros/s/AKfycbyqIfzUpDqaRoPtBTPwV9-orXmpGbbPcBqO6IZchqdRYVc-mvfE70uqehXXFkNwMTvx/exec" target="_blank" rel="noopener">자동화 웹 열기 <span class="arrow" aria-hidden="true">→</span></a>
               </div>
@@ -711,6 +722,27 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
                 <b>날아라 슈퍼카</b>
                 <small>눌러서 여기서 바로 플레이</small>
               </button>
+            </figure>
+          </article>
+
+          <article class="card featured" aria-roledescription="slide">
+            <div class="featured-body">
+              <span class="label">GAME · 인터랙티브</span>
+              <h3>자율주행 딜레마 — 트롤리 문제 체험 게임</h3>
+              <p class="featured-meta">2026.11 · 개인 프로젝트 · 현대자동차그룹 HINT 실습</p>
+              <p class="featured-desc">브레이크가 고장 난 자율주행차에 타서, 차선마다 다른 사람들이 있는 5가지 상황에서 누구를 지킬지 5초 안에 고르는 게임입니다.</p>
+              <p class="featured-result">선택이 끝나면 자율주행차라면 어떻게 판단했을지 나의 선택과 나란히 보여 주어, 기술이 마주하는 윤리적 판단을 직접 체험하고 생각해 볼 수 있게 했습니다.</p>
+              <div class="tags"><span>HTML · CSS · JavaScript</span><span>Canvas</span><span>Claude</span></div>
+              <div class="work-links">
+                <a class="btn sm" href="https://claude.ai/artifact/VagoDh1SftdEaDG4wnDQ68" target="_blank" rel="noopener">플레이하기 <span class="arrow" aria-hidden="true">→</span></a>
+              </div>
+            </div>
+            <figure class="featured-media demo-media dilemma-cover" aria-hidden="true">
+              <div class="dz">
+                <span class="dz-alert">브레이크 고장!</span>
+                <b>자율주행 딜레마</b>
+                <small>5가지 상황 · 5초 안에 선택</small>
+              </div>
             </figure>
           </article>
 
@@ -841,11 +873,14 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
           <div class="work-top"><span class="day-wrap"><span class="day">DAY 3</span><time class="date" datetime="2026-11-04">11/04</time></span><span class="status">작성 완료</span></div>
           <h3>Apps script로 업무 자동화 웹 • 앱 만들기</h3>
           <dl class="rows">
-            <div><dt>문제</dt><dd>매일 교육 내용을 노션에 정리한 뒤, 포트폴리오 허브에 같은 내용을 다시 옮겨 적고 HTML 코드를 직접 고쳐 배포해야 했습니다. 반복·규칙·데이터 기준으로 일상의 불편을 점수화해 보니 이 '이중 기록'이 자동화 효과가 가장 큰 문제였습니다.</dd></div>
-            <div><dt>내가 한 일</dt><dd>문제정의문과 PRD를 작성해 범위를 정하고, Google Sheets와 Apps Script로 웹앱을 만들었습니다. 달력에서 날짜를 고르면 포트폴리오와 같은 모양의 카드에 바로 기록하고, 확인 후 확정하면 GitHub API로 사이트 코드에 카드가 자동 커밋되도록 했습니다. 공개 링크에서도 포트폴리오가 함부로 바뀌지 않도록 올리기·삭제에 비밀번호 잠금을 넣었고, 노션 API로 교육 메모와 일정표를 앱 안에서 함께 볼 수 있게 했습니다.</dd></div>
+            <div><dt>문제</dt><dd>노션에 정리한 교육 내용을 포트폴리오 허브에 다시 옮겨 적고 HTML을 직접 고쳐 배포하는 '이중 기록'을 없애는 것이 목표였습니다.</dd></div>
+            <div><dt>내가 한 일</dt><dd>문제정의문과 PRD로 범위를 정하고, Google Sheets와 Apps Script로 기록 웹앱을 만들었습니다. 카드를 확정하면 GitHub API로 이 사이트에 자동 커밋되고, 올리기·삭제는 비밀번호로 잠갔습니다.</dd></div>
             <div><dt>사용 기술</dt><dd>Google Apps Script, Google Sheets, GitHub API, Notion API, Claude</dd></div>
-            <div><dt>결과</dt><dd>카드를 쓰고 [확정]을 누르면 1~2분 안에 포트폴리오 허브의 ‘HINT 여정'에 반영됩니다. 코드를 직접 고치던 과정이 버튼 한 번으로 바뀌었고, 기록 현황(확정 카드 수, 빠뜨린 날, 많이 쓴 기술)도 한눈에 볼 수 있게 되었습니다.</dd></div>
+            <div><dt>결과</dt><dd>[확정] 한 번이면 1~2분 안에 'HINT 여정'에 카드가 올라갑니다. 코드를 직접 고치던 과정이 버튼 한 번으로 바뀌었습니다.</dd></div>
           </dl>
+          <div class="work-links">
+            <a class="btn sm" href="https://script.google.com/macros/s/AKfycbyqIfzUpDqaRoPtBTPwV9-orXmpGbbPcBqO6IZchqdRYVc-mvfE70uqehXXFkNwMTvx/exec" target="_blank" rel="noopener">자동화 웹 열기 <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
         </article>
 
         <!-- 다음 날 결과물은 DAY 2 카드를 복사해 이 카드 바로 앞에 붙이세요. -->
