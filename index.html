@@ -464,8 +464,6 @@ section { scroll-margin-top: 84px; padding-block: clamp(72px, 9vw, 120px) 0; }
 
 /* 슬라이드 안에서 직접 써 볼 수 있는 결과물(자동화 웹 그림, 게임) */
 .demo-media { position: relative; border: 1px solid var(--line); }
-.demo-media.playing { aspect-ratio: auto; height: min(80vh, 680px); }
-.demo-media iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
 /* 자동화 웹: 실제 화면 구성을 줄여 그린 그림 */
 .mock { position: absolute; inset: 0; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
 .mock-title { font-size: 15px; font-weight: 800; }
@@ -478,16 +476,6 @@ section { scroll-margin-top: 84px; padding-block: clamp(72px, 9vw, 120px) 0; }
 .mock-cal span { border-radius: 6px; border: 1px solid var(--line); display: grid; place-items: center; color: var(--muted); }
 .mock-cal .on { background: var(--fg); color: var(--bg); border-color: transparent; }
 .mock-cal .today { border: 2px dashed var(--accent); color: var(--accent); font-weight: 700; }
-/* 게임: 누르기 전에는 표지만, 누르면 그 자리에서 실행 */
-.play-cover {
-  position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 12px;
-  border: 0; cursor: pointer; font: inherit; color: #fff;
-  background: radial-gradient(120% 90% at 30% 20%, rgba(127, 82, 255, .55), transparent 60%), radial-gradient(100% 90% at 80% 90%, rgba(59, 130, 246, .5), transparent 60%), #0B0B14;
-}
-.play-cover b { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
-.play-cover .play-icon { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: var(--brand); box-shadow: 0 10px 30px var(--brand-glow); transition: transform .2s ease; }
-.play-cover:hover .play-icon { transform: scale(1.08); }
-.play-cover small { font-size: 13px; opacity: .75; }
 /* 자율주행 딜레마: 밤 도로 3차선 표지 */
 .dilemma-cover {
   display: grid; place-items: center;
@@ -710,19 +698,13 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
               <h3>날아라 슈퍼카 — 자동차 레이싱 게임</h3>
               <p class="featured-meta">2026.11 · 개인 프로젝트 · 현대자동차그룹 HINT 실습</p>
               <p class="featured-desc">AI와 대화하며 기획부터 완성까지 만든 자동차 레이싱 게임입니다. 방향키로 차선을 바꾸고 스페이스로 날아올라 장애물을 피하며 버틴 시간과 점수를 겨룹니다.</p>
-              <p class="featured-result">설치 없이 브라우저에서 바로 플레이할 수 있게 공개했습니다. 오른쪽 화면을 누르면 이 페이지 안에서 바로 해 볼 수 있습니다.</p>
-              <div class="tags"><span>HTML · CSS · JavaScript</span><span>Claude</span></div>
+              <p class="featured-result">로우폴리 3D 도로 위로 날씨가 매번 바뀌고, 순위표로 기록을 겨룰 수 있게 만들어 설치 없이 브라우저에서 바로 플레이할 수 있게 공개했습니다.</p>
+              <div class="tags"><span>JavaScript</span><span>Three.js</span><span>Claude</span></div>
               <div class="work-links">
                 <a class="btn sm" href="https://sohee9010.github.io/HINT_car/" target="_blank" rel="noopener">플레이하기 <span class="arrow" aria-hidden="true">→</span></a>
               </div>
             </div>
-            <figure class="featured-media demo-media" id="car-view">
-              <button class="play-cover" type="button" id="car-play">
-                <span class="play-icon" aria-hidden="true">▶</span>
-                <b>날아라 슈퍼카</b>
-                <small>눌러서 여기서 바로 플레이</small>
-              </button>
-            </figure>
+            <figure class="featured-media"><img src="images/supercar.jpg" alt="날아라 슈퍼카 플레이 화면: 눈 내리는 3차선 도로를 달리는 노란 슈퍼카" loading="lazy" style="object-position: center 75%"></figure>
           </article>
 
           <article class="card featured" aria-roledescription="slide">
@@ -893,34 +875,6 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
       </div>
     </div>
   </section>
-
-  <script>
-  // 게임은 누를 때만 불러와 페이지가 무거워지지 않게 하고, 다른 슬라이드로 넘기면 다시 표지로 돌려 소리를 멈춥니다.
-  (function () {
-    var view = document.getElementById('car-view');
-    var btn = document.getElementById('car-play');
-    if (!view || !btn) return;
-    var slide = view.closest('.featured');
-    btn.addEventListener('click', function () {
-      var f = document.createElement('iframe');
-      f.src = 'https://sohee9010.github.io/HINT_car/';
-      f.title = '날아라 슈퍼카 게임';
-      f.allow = 'fullscreen; autoplay';
-      view.classList.add('playing');
-      btn.replaceWith(f);
-      f.focus();
-    });
-    if (slide && window.MutationObserver) {
-      new MutationObserver(function () {
-        var f = view.querySelector('iframe');
-        if (f && !slide.classList.contains('is-active')) {
-          f.replaceWith(btn);
-          view.classList.remove('playing');
-        }
-      }).observe(slide, { attributes: true, attributeFilter: ['class'] });
-    }
-  })();
-  </script>
 
   <section id="contact">
     <div class="in">
