@@ -316,6 +316,12 @@ section { scroll-margin-top: 84px; padding-block: clamp(72px, 9vw, 120px) 0; }
 .info dt { font-size: 13px; font-weight: 600; color: var(--muted); }
 .info dd { font-weight: 600; margin-top: 4px; word-break: keep-all; }
 .info dd.ph { font-weight: 400; color: var(--muted); }
+.info .wide { grid-column: 1 / -1; }
+.edu { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.edu li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
+.edu b { font-weight: 600; }
+.edu span { font-size: 14px; font-weight: 400; color: var(--muted); }
+.edu .edu-names { font-size: 13px; font-weight: 400; color: var(--muted); margin-top: -4px; word-break: keep-all; }
 .text-link { font-weight: 700; font-size: 15px; color: var(--muted); border-bottom: 1px solid var(--dash); padding-bottom: 2px; transition: color .18s ease, border-color .18s ease; }
 .text-link:hover { color: var(--accent); border-color: var(--accent); }
 .stack-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; }
@@ -549,8 +555,19 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
           <dl class="info">
             <div><dt>전공</dt><dd>컴퓨터공학전공</dd></div>
             <!-- 관심 분야: 채우면 주석을 풀어 주세요. <div><dt>관심 분야</dt><dd>여기에 입력</dd></div> -->
-            <div><dt>프로젝트 경험</dt><dd>청년일경험사업 · 커넥팅더닷츠 째깍섬 UI/UX 개선</dd></div>
-            <div><dt>교육</dt><dd>현대자동차그룹 HINT 2기 (수료 중)</dd></div>
+            <div><dt>프로젝트 경험</dt><dd>
+              <ul class="edu">
+                <li><b>째깍섬 상세페이지 UX 개선</b><span>청년일경험사업 · 커넥팅더닷츠 협업</span></li>
+                <li><b>외 5건</b><span>웹 1 · 게임 2 · Android 2</span></li>
+                <li class="edu-names">백화점 통합 관리 플랫폼, STEP UP, 너구리 요괴의 대탈출, 플랜더, 담북</li>
+              </ul>
+            </dd></div>
+            <div class="wide"><dt>교육</dt><dd>
+              <ul class="edu">
+                <li><b>현대자동차그룹 HINT 2기</b><span>수료 중</span></li>
+                <li><b>클라우드 활용 풀스택 개발 과정 (KDT)</b><span>한국정보교육원 · 2025.03 – 2026.01 수료</span></li>
+              </ul>
+            </dd></div>
           </dl>
 
           <div class="stack">
