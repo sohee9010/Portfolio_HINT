@@ -462,21 +462,10 @@ section { scroll-margin-top: 84px; padding-block: clamp(72px, 9vw, 120px) 0; }
 }
 .nav-btn:hover { background: var(--brand); color: #ffffff; border-color: transparent; box-shadow: 0 8px 20px var(--brand-glow); transform: translateY(-2px); }
 
-/* ---------- 4-1. 체험: 직접 써 볼 수 있는 결과물 ---------- */
-.demos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
-@media (max-width: 860px) { .demos { grid-template-columns: 1fr; } }
-.demo { display: flex; flex-direction: column; gap: 14px; }
-.demo h3 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; word-break: keep-all; }
-.demo p { word-break: keep-all; }
-.demo .featured-meta { margin-top: -6px; }
-/* 브라우저 창 모양 미리보기 */
-.demo-window { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); }
-.demo-bar { display: flex; align-items: center; gap: 6px; padding: 9px 12px; border-bottom: 1px solid var(--line); }
-.demo-bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--dash); }
-.demo-bar span { margin-left: 8px; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.demo-view { position: relative; aspect-ratio: 16 / 10; }
-.demo-view.playing { aspect-ratio: auto; height: min(80vh, 680px); }
-.demo-view iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+/* 슬라이드 안에서 직접 써 볼 수 있는 결과물(자동화 웹 그림, 게임) */
+.demo-media { position: relative; border: 1px solid var(--line); }
+.demo-media.playing { aspect-ratio: auto; height: min(80vh, 680px); }
+.demo-media iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
 /* 자동화 웹: 실제 화면 구성을 줄여 그린 그림 */
 .mock { position: absolute; inset: 0; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
 .mock-title { font-size: 15px; font-weight: 800; }
@@ -540,7 +529,6 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
       <a href="#about">소개</a>
       <a href="#skills">역량</a>
       <a href="#works">결과물</a>
-      <a href="#lab">체험</a>
       <a href="#contact">연락</a>
     </nav>
     <div class="top-actions">
@@ -678,6 +666,52 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
               </div>
             </div>
             <figure class="featured-media"><img src="https://sohee9010.github.io/images/%EC%A7%B8%EA%B9%8D%EC%84%AC%ED%91%9C%EC%A7%80.png" alt="째깍섬 상세페이지 UX 개선 프로젝트 표지" loading="lazy"></figure>
+          </article>
+
+          <article class="card featured" aria-roledescription="slide">
+            <div class="featured-body">
+              <span class="label">AUTOMATION · 웹앱</span>
+              <h3>HINT 포트폴리오 자동화 기록</h3>
+              <p class="featured-meta">2026.11 · 개인 프로젝트 · 현대자동차그룹 HINT 실습</p>
+              <p class="featured-desc">HINT에서 매일 배우고 만든 것을 한 장의 카드로 정리하는 웹앱입니다. 달력에서 날짜를 고르고 문제 · 내가 한 일 · 사용 기술 · 결과를 적어 확정하면, 포트폴리오 허브의 'HINT 여정'에 올릴 기록이 완성됩니다.</p>
+              <p class="featured-result">기록을 입력 · 목록 · 요약 화면으로 나누고 교육 진행 일수를 함께 보여 줘, 60일 과정 동안 하루도 빠짐없이 남길 수 있게 했습니다.</p>
+              <div class="tags"><span>Google Apps Script</span><span>JavaScript</span><span>업무 자동화</span></div>
+              <div class="work-links">
+                <a class="btn sm" href="https://script.google.com/macros/s/AKfycbyqIfzUpDqaRoPtBTPwV9-orXmpGbbPcBqO6IZchqdRYVc-mvfE70uqehXXFkNwMTvx/exec" target="_blank" rel="noopener">자동화 웹 열기 <span class="arrow" aria-hidden="true">→</span></a>
+              </div>
+            </div>
+            <figure class="featured-media demo-media" aria-hidden="true">
+              <div class="mock">
+                <div class="mock-title">HINT 포트폴리오 자동화 기록</div>
+                <div class="mock-banner">오늘(11/04)은 <b>DAY 3</b>을 작성할 차례예요.</div>
+                <div class="mock-tabs"><span>입력</span><span>목록</span><span>요약</span></div>
+                <div class="mock-cal">
+                  <span></span><span class="on">2</span><span class="on">3</span><span class="today">4</span><span>5</span><span>6</span><span>7</span>
+                  <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+                </div>
+              </div>
+            </figure>
+          </article>
+
+          <article class="card featured" aria-roledescription="slide">
+            <div class="featured-body">
+              <span class="label">GAME · 웹 게임</span>
+              <h3>날아라 슈퍼카 — 자동차 레이싱 게임</h3>
+              <p class="featured-meta">2026.11 · 개인 프로젝트 · 현대자동차그룹 HINT 실습</p>
+              <p class="featured-desc">AI와 대화하며 기획부터 완성까지 만든 자동차 레이싱 게임입니다. 방향키로 차선을 바꾸고 스페이스로 날아올라 장애물을 피하며 버틴 시간과 점수를 겨룹니다.</p>
+              <p class="featured-result">설치 없이 브라우저에서 바로 플레이할 수 있게 공개했습니다. 오른쪽 화면을 누르면 이 페이지 안에서 바로 해 볼 수 있습니다.</p>
+              <div class="tags"><span>HTML · CSS · JavaScript</span><span>Claude</span></div>
+              <div class="work-links">
+                <a class="btn sm" href="https://sohee9010.github.io/HINT_car/" target="_blank" rel="noopener">새 창에서 플레이 <span class="arrow" aria-hidden="true">→</span></a>
+              </div>
+            </div>
+            <figure class="featured-media demo-media" id="car-view">
+              <button class="play-cover" type="button" id="car-play">
+                <span class="play-icon" aria-hidden="true">▶</span>
+                <b>날아라 슈퍼카</b>
+                <small>눌러서 여기서 바로 플레이</small>
+              </button>
+            </figure>
           </article>
 
           <!-- 나중에 넣을 프로젝트: 넣고 싶은 article 덩어리만 이 주석 밖(위)으로 옮기면 슬라이드에 추가됩니다.
@@ -825,74 +859,31 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
     </div>
   </section>
 
-  <section id="lab">
-    <div class="in">
-      <div class="sec-head"><h2>체험</h2><span class="aside">HINT에서 만든 결과물을 직접 써 보세요</span></div>
-      <div class="demos">
-
-        <article class="card demo">
-          <div class="demo-window">
-            <div class="demo-bar"><i></i><i></i><i></i><span>HINT 포트폴리오 자동화 기록</span></div>
-            <div class="demo-view">
-              <div class="mock" aria-hidden="true">
-                <div class="mock-title">HINT 포트폴리오 자동화 기록</div>
-                <div class="mock-banner">오늘(11/04)은 <b>DAY 3</b>을 작성할 차례예요.</div>
-                <div class="mock-tabs"><span>입력</span><span>목록</span><span>요약</span></div>
-                <div class="mock-cal">
-                  <span></span><span class="on">2</span><span class="on">3</span><span class="today">4</span><span>5</span><span>6</span><span>7</span>
-                  <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <span class="label">AUTOMATION · 웹앱</span>
-          <h3>HINT 포트폴리오 자동화 기록</h3>
-          <p class="featured-meta">11/04 · DAY 3 · 개인 실습</p>
-          <p>HINT에서 매일 배우고 만든 것을 한 장의 카드로 정리하는 웹앱입니다. 달력에서 날짜를 고르고 문제 · 내가 한 일 · 사용 기술 · 결과를 적어 확정하면, 포트폴리오 허브의 'HINT 여정'에 올릴 기록이 완성됩니다.</p>
-          <div class="tags"><span>Google Apps Script</span><span>JavaScript</span><span>업무 자동화</span></div>
-          <div class="work-links">
-            <a class="btn sm" href="https://script.google.com/macros/s/AKfycbyqIfzUpDqaRoPtBTPwV9-orXmpGbbPcBqO6IZchqdRYVc-mvfE70uqehXXFkNwMTvx/exec" target="_blank" rel="noopener">자동화 웹 열기 <span class="arrow" aria-hidden="true">→</span></a>
-          </div>
-        </article>
-
-        <article class="card demo">
-          <div class="demo-window">
-            <div class="demo-bar"><i></i><i></i><i></i><span>날아라 슈퍼카</span></div>
-            <div class="demo-view" id="car-view">
-              <button class="play-cover" type="button" id="car-play">
-                <span class="play-icon" aria-hidden="true">▶</span>
-                <b>날아라 슈퍼카</b>
-                <small>눌러서 여기서 바로 플레이</small>
-              </button>
-            </div>
-          </div>
-          <span class="label">GAME · 웹 게임</span>
-          <h3>날아라 슈퍼카</h3>
-          <p class="featured-meta">11/03 · DAY 2 · 개인 실습</p>
-          <p>AI와 대화하며 기획부터 완성까지 만든 자동차 레이싱 게임입니다. 설치 없이 브라우저에서 바로 플레이할 수 있습니다.</p>
-          <div class="tags"><span>HTML · CSS · JavaScript</span><span>Claude</span></div>
-          <div class="work-links">
-            <a class="btn sm" href="https://sohee9010.github.io/HINT_car/" target="_blank" rel="noopener">새 창에서 플레이 <span class="arrow" aria-hidden="true">→</span></a>
-          </div>
-        </article>
-
-      </div>
-    </div>
-  </section>
   <script>
-  // 게임은 누를 때만 불러와 페이지가 무거워지지 않게 합니다.
+  // 게임은 누를 때만 불러와 페이지가 무거워지지 않게 하고, 다른 슬라이드로 넘기면 다시 표지로 돌려 소리를 멈춥니다.
   (function () {
+    var view = document.getElementById('car-view');
     var btn = document.getElementById('car-play');
-    if (!btn) return;
+    if (!view || !btn) return;
+    var slide = view.closest('.featured');
     btn.addEventListener('click', function () {
       var f = document.createElement('iframe');
       f.src = 'https://sohee9010.github.io/HINT_car/';
       f.title = '날아라 슈퍼카 게임';
       f.allow = 'fullscreen; autoplay';
-      btn.parentNode.classList.add('playing');
+      view.classList.add('playing');
       btn.replaceWith(f);
       f.focus();
     });
+    if (slide && window.MutationObserver) {
+      new MutationObserver(function () {
+        var f = view.querySelector('iframe');
+        if (f && !slide.classList.contains('is-active')) {
+          f.replaceWith(btn);
+          view.classList.remove('playing');
+        }
+      }).observe(slide, { attributes: true, attributeFilter: ['class'] });
+    }
   })();
   </script>
 
