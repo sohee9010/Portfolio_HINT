@@ -167,9 +167,10 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 760px) { .gnb { display: none; } }
 
 /* ---------- 섹션 공통 ---------- */
-section { scroll-margin-top: 84px; padding-block: 52px 8px; }
-.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 20px; }
-.sec-head h2 { font-size: 1.5rem; font-weight: 700; }
+/* 섹션 사이를 넉넉하게 띄워 한 화면에 한 주제씩 읽히게 합니다. */
+section { scroll-margin-top: 84px; padding-block: clamp(72px, 9vw, 120px) 0; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 32px; }
+.sec-head h2 { font-size: clamp(1.6rem, 2.4vw, 2rem); font-weight: 800; letter-spacing: -0.02em; }
 .sec-head .aside { color: var(--muted); font-size: 15px; }
 .label { font-family: var(--font-mono); font-size: 13px; letter-spacing: .06em; color: var(--accent); font-weight: 700; }
 
@@ -178,7 +179,7 @@ section { scroll-margin-top: 84px; padding-block: 52px 8px; }
   border: 1px solid var(--line);
   border-radius: 24px;
   box-shadow: var(--shadow);
-  padding: 28px;
+  padding: 32px;
   min-width: 0;
   transition: transform .35s cubic-bezier(.22, .61, .36, 1), box-shadow .35s cubic-bezier(.22, .61, .36, 1);
 }
@@ -256,9 +257,11 @@ section { scroll-margin-top: 84px; padding-block: 52px 8px; }
 
 /* ---------- 2. 소개 ---------- */
 /* 프로필 카드: 왼쪽 사진, 오른쪽 이름·소개·정보·스택 */
-.profile { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 40px; padding: 28px; }
+.profile { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 56px; padding: 40px; }
 @media (max-width: 860px) { .profile { grid-template-columns: 220px minmax(0, 1fr); gap: 28px; } }
-@media (max-width: 680px) { .profile { grid-template-columns: 1fr; } }
+@media (max-width: 680px) { .profile { grid-template-columns: 1fr; gap: 32px; } }
+/* 휴대폰에서는 카드 안쪽 여백을 조금 줄여 글이 들어갈 폭을 확보합니다. */
+@media (max-width: 520px) { .card, .profile, .featured { padding: 24px; } }
 /* 사진 칸: 사진을 넣기 전에는 점선 자리 표시가 보입니다. */
 .photo { margin: 0; position: relative; overflow: hidden; border-radius: 18px; aspect-ratio: 4 / 5; align-self: start; background: var(--surface); }
 @media (max-width: 680px) { .photo { width: 100%; max-width: 260px; } }
@@ -268,7 +271,7 @@ section { scroll-margin-top: 84px; padding-block: 52px 8px; }
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
   color: var(--muted); font-size: 15px;
 }
-.profile-body { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.profile-body { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
 .profile-name { font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 800; letter-spacing: -0.02em; margin-top: 8px; }
 .profile-name span { font-size: 1.05rem; font-weight: 500; color: var(--muted); margin-left: 12px; letter-spacing: 0; }
 .profile-bio { color: var(--muted); font-size: 1.05rem; margin-top: 10px; max-width: 36em; word-break: keep-all; }
@@ -298,7 +301,7 @@ section { scroll-margin-top: 84px; padding-block: 52px 8px; }
 .chip small { font-family: var(--font-mono); font-weight: 500; font-size: 12px; color: var(--muted); }
 
 /* ---------- 3. 역량 ---------- */
-.skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; justify-items: center; }
+.skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; justify-items: center; }
 @media (max-width: 1060px) { .skills { grid-template-columns: 1fr; } }
 .skill {
   width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 50%;
@@ -336,8 +339,8 @@ section { scroll-margin-top: 84px; padding-block: 52px 8px; }
 .scroller.at-start { cursor: grab; }
 .scroller.panning { cursor: grabbing; -webkit-user-select: none; user-select: none; }
 .scroller { touch-action: pan-y; }
-.works { display: flex; width: max-content; gap: 16px; padding-block: 16px; }
-.work { display: flex; flex-direction: column; gap: 16px; width: 350px; max-width: 100%; flex-shrink: 0; }
+.works { display: flex; width: max-content; gap: 24px; padding-block: 20px; }
+.work { display: flex; flex-direction: column; gap: 20px; width: 350px; max-width: 100%; flex-shrink: 0; }
 @media (min-width: 768px) { .work { width: 450px; } }
 @media (prefers-reduced-motion: reduce) {
   .scroller { overflow-x: auto; }
@@ -351,11 +354,27 @@ section { scroll-margin-top: 84px; padding-block: 52px 8px; }
 .status { font-size: 14px; color: var(--muted); }
 .work.done .status { color: var(--accent); font-weight: 700; }
 .work h3 { font-size: 1.15rem; }
-.rows { display: grid; gap: 14px; background: var(--surface); border-radius: 18px; padding: 18px; }
+.rows { display: grid; gap: 18px; background: var(--surface); border-radius: 18px; padding: 22px; }
 .rows dt { font-size: 14px; font-weight: 700; color: var(--muted); }
 .rows dd { margin-top: 2px; min-height: 1.65em; overflow-wrap: anywhere; }
 .rows dd.ph { color: var(--muted); }
 .work:not(.done) .rows dd { border-bottom: 1px dashed var(--dash); }
+.work-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+/* 아직 채우지 않은 날들을 한 장으로 묶은 좁은 카드 */
+.work.upcoming { width: 260px; justify-content: center; border-style: dashed; box-shadow: none; background: transparent; }
+.work.upcoming h3 { font-size: 1rem; color: var(--muted); font-weight: 500; word-break: keep-all; }
+
+/* 대표 프로젝트: 흐르지 않고 크게 고정해 둡니다. */
+.featured { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; padding: 40px; margin-bottom: 64px; }
+.featured:has(.featured-media) { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; }
+@media (max-width: 760px) { .featured:has(.featured-media) { grid-template-columns: 1fr; } }
+.featured-body { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.featured h3 { font-size: clamp(1.4rem, 2.6vw, 1.85rem); font-weight: 800; letter-spacing: -0.02em; word-break: keep-all; }
+.featured-meta { font-family: var(--font-mono); font-size: 13px; letter-spacing: .04em; color: var(--muted); }
+.featured-desc { font-size: 1.05rem; max-width: 40em; word-break: keep-all; }
+.featured-media { margin: 0; border-radius: 18px; overflow: hidden; background: var(--surface); }
+.featured-media img { display: block; width: 100%; height: auto; }
+.sub-head { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
 
 /* ---------- 5. 연락 ---------- */
 .contact { display: grid; grid-template-columns: 1fr auto; gap: 20px 32px; align-items: center; }
@@ -369,7 +388,7 @@ section { scroll-margin-top: 84px; padding-block: 52px 8px; }
 }
 .copied { min-height: 1.5em; font-size: 15px; color: var(--accent); margin-top: 10px; }
 
-footer { margin-top: 64px; border-top: 1px solid var(--line); padding-block: 28px 36px; color: var(--muted); font-size: 14px; }
+footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28px 36px; color: var(--muted); font-size: 14px; }
 
 /* ---------- 모달 ---------- */
 .scrim { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
@@ -407,7 +426,7 @@ footer { margin-top: 64px; border-top: 1px solid var(--line); padding-block: 28p
   <section id="first-screen" class="hero">
     <div id="hero-ribbon-bg" class="hero-ribbon-bg" aria-hidden="true"></div>
     <div class="in">
-      <span class="kicker">[희망 회사·산업] [직무] 지원자</span>
+      <span class="kicker">웹개발자 포트폴리오</span>
       <h1>안녕하세요, <em>산초</em>입니다.</h1>
       <p class="message">감각적인 디자인으로 <span class="mark"><span class="mark-text">사용자 경험을 향상하는</span></span> 웹개발자입니다.</p>
       <p class="proof">최근 청년일경험사업을 통해 커넥팅더닷츠 째깍섬 UI/UX 개선 프로젝트를 진행하였으며, 현재 현대자동차그룹 HINT 2기 수료 중입니다.</p>
@@ -443,7 +462,7 @@ footer { margin-top: 64px; border-top: 1px solid var(--line); padding-block: 28p
 
           <dl class="info">
             <div><dt>전공</dt><dd>컴퓨터공학전공</dd></div>
-            <div><dt>관심 분야</dt><dd class="ph">[관심 분야]</dd></div>
+            <!-- 관심 분야: 채우면 주석을 풀어 주세요. <div><dt>관심 분야</dt><dd>여기에 입력</dd></div> -->
             <div><dt>프로젝트 경험</dt><dd>청년일경험사업 · 커넥팅더닷츠 째깍섬 UI/UX 개선</dd></div>
             <div><dt>교육</dt><dd>현대자동차그룹 HINT 2기 (수료 중)</dd></div>
           </dl>
@@ -496,7 +515,30 @@ footer { margin-top: 64px; border-top: 1px solid var(--line); padding-block: 28p
 
   <section id="works">
     <div class="in">
-      <div class="sec-head"><h2>결과물</h2><span class="aside">6일 동안 하루 한 장씩 채우는 카드</span></div>
+      <div class="sec-head"><h2>결과물</h2><span class="aside">대표 프로젝트와 6일 개발 기록</span></div>
+
+      <!-- 대표 프로젝트: 아래 주석 속 항목을 채우고 주석 표시(<!- - , - ->)를 지우면 화면에 나타납니다. -->
+      <article class="card featured">
+        <div class="featured-body">
+          <span class="label">대표 프로젝트</span>
+          <h3>째깍섬 UI/UX 개선 프로젝트</h3>
+          <p class="featured-meta">청년일경험사업 · 커넥팅더닷츠 협업</p>
+          <p class="featured-desc">청년일경험사업을 통해 커넥팅더닷츠의 서비스 '째깍섬'의 UI/UX를 개선한 실무 협업 프로젝트입니다.</p>
+          <!--
+          <dl class="rows">
+            <div><dt>문제</dt><dd>여기에 입력</dd></div>
+            <div><dt>내가 한 일</dt><dd>여기에 입력</dd></div>
+            <div><dt>결과</dt><dd>여기에 입력</dd></div>
+          </dl>
+          <div class="work-links"><a class="btn sm" href="결과물 주소" target="_blank" rel="noopener">결과물 보기 →</a></div>
+          -->
+        </div>
+        <!-- 대표 이미지: 아래 주석을 풀고 파일 이름을 바꾸면 오른쪽에 이미지가 들어갑니다.
+        <figure class="featured-media"><img src="images/대표이미지.png" alt="째깍섬 UI/UX 개선 결과 화면"></figure>
+        -->
+      </article>
+
+      <h3 class="sub-head">6일 개발 기록</h3>
       <div class="scroller" id="works-scroller">
       <div class="works" id="works-track">
 
@@ -504,10 +546,10 @@ footer { margin-top: 64px; border-top: 1px solid var(--line); padding-block: 28p
           <div class="work-top"><span class="day-wrap"><span class="day">DAY 1</span><time class="date" datetime="2026-11-02">11/02</time></span><span class="status">작성 완료</span></div>
           <h3>디지털 트레이닝 AI 활용</h3>
           <dl class="rows">
-            <div><dt>문제</dt><dd>AI 도구를 여러 종류의 과제에 직접 써 보며 활용 방법을 익히는 것</dd></div>
-            <div><dt>내가 한 일</dt><dd>AI로 유튜브 영상을 분석하고, 음악을 만들고, 보고서를 제작했습니다.</dd></div>
-            <div><dt>사용 기술</dt><dd>Gemini, GPT, Claude</dd></div>
-            <div><dt>결과</dt><dd>영상 분석, 음악, 보고서 결과물을 AI와 함께 완성했습니다.</dd></div>
+            <div><dt>문제</dt><dd>빠르게 발전하는 생성형 AI를 과제와 업무에 제대로 활용하는 방법을 익히는 것</dd></div>
+            <div><dt>내가 한 일</dt><dd>Claude, Gemini, ChatGPT, Copilot 등 생성형 AI의 흐름을 살펴보고, 목차를 활용해 프롬프트를 구조화하는 방법을 실습했습니다. AI로 유튜브 영상을 분석하고, 음악을 만들고, 보고서를 제작했으며, 공공데이터포털·NKIS 국가정책연구포털·NCS에서 근거 자료를 찾는 방법도 익혔습니다.</dd></div>
+            <div><dt>사용 기술</dt><dd>Gemini, GPT, Claude, Napkin AI, 공공데이터포털</dd></div>
+            <div><dt>결과</dt><dd>영상 분석, 음악, 보고서 결과물을 AI와 함께 완성했습니다. 'AI 결과물은 초안이고, 최종 판단과 검증은 사람이 한다'는 활용 원칙을 세웠습니다.</dd></div>
           </dl>
         </article>
 
@@ -516,54 +558,20 @@ footer { margin-top: 64px; border-top: 1px solid var(--line); padding-block: 28p
           <h3>AI로 포트폴리오 허브와 자동차 게임 만들기</h3>
           <dl class="rows">
             <div><dt>문제</dt><dd>AI와 함께 아이디어를 실제로 동작하는 웹 결과물로 옮기는 것. 나를 소개할 포트폴리오 허브와 자동차를 주제로 한 게임을 만드는 것이 목표였습니다.</dd></div>
-            <div><dt>내가 한 일</dt><dd>AI와 대화하며 포트폴리오 허브의 섹션 구성과 인터랙션(리본 배경, 흐르는 결과물 카드, 역량 원 반전)을 직접 다듬었습니다. 이어서 자동차 레이싱 게임과, 자율주행차가 피할 수 없는 사고 앞에서 내리는 선택을 다룬 자율주행 딜레마 게임을 기획하고 만들었습니다.</dd></div>
+            <div><dt>내가 한 일</dt><dd>AI와 대화하며 포트폴리오 허브의 섹션 구성과 인터랙션(리본 배경, 흐르는 결과물 카드, 역량 원 반전)을 직접 다듬었습니다. 이어서 자동차 레이싱 게임 '날아라 슈퍼카'와, 자율주행차가 피할 수 없는 사고 앞에서 내리는 선택을 다룬 '자율주행 딜레마' 게임을 기획하고 만들었습니다.</dd></div>
             <div><dt>사용 기술</dt><dd>Claude, HTML · CSS · JavaScript, WebGL</dd></div>
-            <div><dt>결과</dt><dd>포트폴리오 허브 한 페이지와 게임 두 편(레이싱, 자율주행 딜레마)을 완성했습니다. AI에 맡기기만 하지 않고 원하는 모습을 구체적으로 요청하고 고쳐 가는 방법을 익혔습니다.</dd></div>
+            <div><dt>결과</dt><dd>포트폴리오 허브 한 페이지와 게임 두 편('날아라 슈퍼카', '자율주행 딜레마')을 완성해 바로 플레이할 수 있게 공개했습니다. AI에 맡기기만 하지 않고 원하는 모습을 구체적으로 요청하고 고쳐 가는 방법을 익혔습니다.</dd></div>
           </dl>
+          <div class="work-links">
+            <a class="btn sm" href="https://sohee9010.github.io/HINT_car/" target="_blank" rel="noopener">날아라 슈퍼카 <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn sm" href="https://claude.ai/artifact/VagoDh1SftdEaDG4wnDQ68" target="_blank" rel="noopener">자율주행 딜레마 <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
         </article>
 
-        <article class="card work">
-          <div class="work-top"><span class="day">DAY 3</span><span class="status">작성 대기</span></div>
-          <h3>Day 3 결과물 자리</h3>
-          <dl class="rows">
-            <div><dt>문제</dt><dd></dd></div>
-            <div><dt>내가 한 일</dt><dd></dd></div>
-            <div><dt>사용 기술</dt><dd></dd></div>
-            <div><dt>결과</dt><dd></dd></div>
-          </dl>
-        </article>
-
-        <article class="card work">
-          <div class="work-top"><span class="day">DAY 4</span><span class="status">작성 대기</span></div>
-          <h3>Day 4 결과물 자리</h3>
-          <dl class="rows">
-            <div><dt>문제</dt><dd></dd></div>
-            <div><dt>내가 한 일</dt><dd></dd></div>
-            <div><dt>사용 기술</dt><dd></dd></div>
-            <div><dt>결과</dt><dd></dd></div>
-          </dl>
-        </article>
-
-        <article class="card work">
-          <div class="work-top"><span class="day">DAY 5</span><span class="status">작성 대기</span></div>
-          <h3>Day 5 결과물 자리</h3>
-          <dl class="rows">
-            <div><dt>문제</dt><dd></dd></div>
-            <div><dt>내가 한 일</dt><dd></dd></div>
-            <div><dt>사용 기술</dt><dd></dd></div>
-            <div><dt>결과</dt><dd></dd></div>
-          </dl>
-        </article>
-
-        <article class="card work">
-          <div class="work-top"><span class="day">DAY 6</span><span class="status">작성 대기</span></div>
-          <h3>Day 6 결과물 자리</h3>
-          <dl class="rows">
-            <div><dt>문제</dt><dd></dd></div>
-            <div><dt>내가 한 일</dt><dd></dd></div>
-            <div><dt>사용 기술</dt><dd></dd></div>
-            <div><dt>결과</dt><dd></dd></div>
-          </dl>
+        <!-- 다음 날 결과물은 DAY 2 카드를 복사해 이 카드 바로 앞에 붙이세요. -->
+        <article class="card work upcoming">
+          <div class="work-top"><span class="day">DAY 3–6</span><span class="status">준비 중</span></div>
+          <h3>다음 기록이 하루 한 장씩 이어집니다</h3>
         </article>
 
       </div>
@@ -1128,6 +1136,8 @@ footer { margin-top: 64px; border-top: 1px solid var(--line); padding-block: 28p
     var track = document.getElementById('works-track');
     if (!scroller || !track) return;
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // 카드가 화면 폭보다 적으면 흘리지 않고 그대로 둡니다.
+    if (track.scrollWidth <= scroller.clientWidth) return;
 
     Array.prototype.slice.call(track.children).forEach(function (item) {
       var copy = item.cloneNode(true);
@@ -1135,7 +1145,7 @@ footer { margin-top: 64px; border-top: 1px solid var(--line); padding-block: 28p
       track.appendChild(copy);
     });
 
-    var gap = 16, period = 0, x = 0, mode = 'run', from = 0, to = 0, t0 = 0, last = -1;
+    var gap = 24, period = 0, x = 0, mode = 'run', from = 0, to = 0, t0 = 0, last = -1;
     // 한 벌(카드 6장 + 간격 6개)의 길이. 이만큼 가면 처음과 같은 모습이 됩니다.
     function measure() { period = track.scrollWidth / 2 + gap / 2; }
     measure();
