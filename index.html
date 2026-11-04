@@ -2,12 +2,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PSH 포트폴리오 허브</title>
 <script>
-/* 저장해 둔 화면 모드를 그리기 전에 먼저 적용해 깜빡임을 막습니다. */
+/* 기본은 다크 모드입니다. 저장해 둔 선택이 있으면 그걸 그리기 전에 먼저 적용해 깜빡임을 막습니다. */
 (function () {
+  var t = 'dark';
   try {
-    var t = localStorage.getItem('theme');
-    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    var saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') t = saved;
   } catch (e) {}
+  document.documentElement.setAttribute('data-theme', t);
 })();
 </script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -138,11 +140,19 @@ a { color: inherit; text-decoration: none; }
   padding: 4px 9px;
   border-radius: 8px;
 }
-.gnb { display: flex; gap: 28px; font-size: 15px; font-weight: 500; color: var(--muted); }
-.gnb a { position: relative; transition: color .18s ease; }
-.gnb a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; background: var(--brand); transform: scaleX(0); transform-origin: left; transition: transform .2s ease; }
-.gnb a:hover { color: var(--fg); }
-.gnb a:hover::after { transform: scaleX(1); }
+/* 메뉴: 유리 알약 안에 모아 두고, 지금 보고 있는 섹션은 그라디언트로 표시합니다. */
+.gnb {
+  display: flex; gap: 4px; padding: 5px; border-radius: 999px;
+  background: var(--glass-btn); border: 1px solid var(--glass-btn-line); box-shadow: var(--glass-btn-shadow);
+  -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%);
+}
+.gnb a {
+  padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 600;
+  color: var(--fg); opacity: .78;
+  transition: opacity .18s ease, background-color .18s ease, color .18s ease;
+}
+.gnb a:hover { opacity: 1; background: var(--accent-soft); }
+.gnb a[aria-current="true"] { opacity: 1; background: var(--brand); color: #ffffff; box-shadow: 0 4px 14px var(--brand-glow); }
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
   font: inherit; font-weight: 700; font-size: 16px;
@@ -1329,6 +1339,28 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
       if (Math.abs(dx) > 50) go(index + (dx < 0 ? 1 : -1));
     });
     render();
+  })();
+
+  /* 메뉴: 화면에 보이는 섹션에 맞춰 해당 메뉴를 강조합니다. */
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.gnb a'));
+    if (!links.length || !('IntersectionObserver' in window)) return;
+    var byId = {};
+    links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+    var visible = {};
+    function mark() {
+      var best = null;
+      Object.keys(byId).forEach(function (id) {
+        if (visible[id] && (best === null || visible[id] > visible[best])) best = id;
+      });
+      links.forEach(function (a) { a.removeAttribute('aria-current'); });
+      if (best) byId[best].setAttribute('aria-current', 'true');
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { visible[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0; });
+      mark();
+    }, { rootMargin: '-35% 0px -50% 0px', threshold: [0, 0.01, 0.25, 0.5, 1] });
+    Object.keys(byId).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
   })();
 
   var modal = document.getElementById('stack-modal');
