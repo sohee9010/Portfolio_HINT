@@ -462,6 +462,44 @@ section { scroll-margin-top: 84px; padding-block: clamp(72px, 9vw, 120px) 0; }
 }
 .nav-btn:hover { background: var(--brand); color: #ffffff; border-color: transparent; box-shadow: 0 8px 20px var(--brand-glow); transform: translateY(-2px); }
 
+/* ---------- 4-1. 체험: 직접 써 볼 수 있는 결과물 ---------- */
+.demos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .demos { grid-template-columns: 1fr; } }
+.demo { display: flex; flex-direction: column; gap: 14px; }
+.demo h3 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; word-break: keep-all; }
+.demo p { word-break: keep-all; }
+.demo .featured-meta { margin-top: -6px; }
+/* 브라우저 창 모양 미리보기 */
+.demo-window { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); }
+.demo-bar { display: flex; align-items: center; gap: 6px; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+.demo-bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--dash); }
+.demo-bar span { margin-left: 8px; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.demo-view { position: relative; aspect-ratio: 16 / 10; }
+.demo-view.playing { aspect-ratio: auto; height: min(80vh, 680px); }
+.demo-view iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+/* 자동화 웹: 실제 화면 구성을 줄여 그린 그림 */
+.mock { position: absolute; inset: 0; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
+.mock-title { font-size: 15px; font-weight: 800; }
+.mock-banner { padding: 8px 12px; border-radius: 8px; background: var(--fg); color: var(--bg); font-weight: 600; }
+.mock-banner b { color: #FACC15; }
+.mock-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.mock-tabs span { text-align: center; padding: 5px 0; border-radius: 6px; border: 1px solid var(--line); color: var(--muted); }
+.mock-tabs span:first-child { background: var(--fg); color: var(--bg); border-color: transparent; }
+.mock-cal { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.mock-cal span { border-radius: 6px; border: 1px solid var(--line); display: grid; place-items: center; color: var(--muted); }
+.mock-cal .on { background: var(--fg); color: var(--bg); border-color: transparent; }
+.mock-cal .today { border: 2px dashed var(--accent); color: var(--accent); font-weight: 700; }
+/* 게임: 누르기 전에는 표지만, 누르면 그 자리에서 실행 */
+.play-cover {
+  position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 12px;
+  border: 0; cursor: pointer; font: inherit; color: #fff;
+  background: radial-gradient(120% 90% at 30% 20%, rgba(127, 82, 255, .55), transparent 60%), radial-gradient(100% 90% at 80% 90%, rgba(59, 130, 246, .5), transparent 60%), #0B0B14;
+}
+.play-cover b { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
+.play-cover .play-icon { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: var(--brand); box-shadow: 0 10px 30px var(--brand-glow); transition: transform .2s ease; }
+.play-cover:hover .play-icon { transform: scale(1.08); }
+.play-cover small { font-size: 13px; opacity: .75; }
+
 /* ---------- 5. 연락 ---------- */
 .contact { display: grid; grid-template-columns: 1fr auto; gap: 20px 32px; align-items: center; }
 @media (max-width: 760px) { .contact { grid-template-columns: 1fr; } }
@@ -502,6 +540,7 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
       <a href="#about">소개</a>
       <a href="#skills">역량</a>
       <a href="#works">결과물</a>
+      <a href="#lab">체험</a>
       <a href="#contact">연락</a>
     </nav>
     <div class="top-actions">
@@ -774,6 +813,77 @@ footer { margin-top: 120px; border-top: 1px solid var(--line); padding-block: 28
       </div>
     </div>
   </section>
+
+  <section id="lab">
+    <div class="in">
+      <div class="sec-head"><h2>체험</h2><span class="aside">HINT에서 만든 결과물을 직접 써 보세요</span></div>
+      <div class="demos">
+
+        <article class="card demo">
+          <div class="demo-window">
+            <div class="demo-bar"><i></i><i></i><i></i><span>HINT 포트폴리오 자동화 기록</span></div>
+            <div class="demo-view">
+              <div class="mock" aria-hidden="true">
+                <div class="mock-title">HINT 포트폴리오 자동화 기록</div>
+                <div class="mock-banner">오늘(11/04)은 <b>DAY 3</b>을 작성할 차례예요.</div>
+                <div class="mock-tabs"><span>입력</span><span>목록</span><span>요약</span></div>
+                <div class="mock-cal">
+                  <span></span><span class="on">2</span><span class="on">3</span><span class="today">4</span><span>5</span><span>6</span><span>7</span>
+                  <span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span class="label">AUTOMATION · 웹앱</span>
+          <h3>HINT 포트폴리오 자동화 기록</h3>
+          <p class="featured-meta">11/04 · DAY 3 · 개인 실습</p>
+          <p>HINT에서 매일 배우고 만든 것을 한 장의 카드로 정리하는 웹앱입니다. 달력에서 날짜를 고르고 문제 · 내가 한 일 · 사용 기술 · 결과를 적어 확정하면, 포트폴리오 허브의 'HINT 여정'에 올릴 기록이 완성됩니다.</p>
+          <div class="tags"><span>Google Apps Script</span><span>JavaScript</span><span>업무 자동화</span></div>
+          <div class="work-links">
+            <a class="btn sm" href="https://script.google.com/macros/s/AKfycbyqIfzUpDqaRoPtBTPwV9-orXmpGbbPcBqO6IZchqdRYVc-mvfE70uqehXXFkNwMTvx/exec" target="_blank" rel="noopener">자동화 웹 열기 <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <article class="card demo">
+          <div class="demo-window">
+            <div class="demo-bar"><i></i><i></i><i></i><span>날아라 슈퍼카</span></div>
+            <div class="demo-view" id="car-view">
+              <button class="play-cover" type="button" id="car-play">
+                <span class="play-icon" aria-hidden="true">▶</span>
+                <b>날아라 슈퍼카</b>
+                <small>눌러서 여기서 바로 플레이</small>
+              </button>
+            </div>
+          </div>
+          <span class="label">GAME · 웹 게임</span>
+          <h3>날아라 슈퍼카</h3>
+          <p class="featured-meta">11/03 · DAY 2 · 개인 실습</p>
+          <p>AI와 대화하며 기획부터 완성까지 만든 자동차 레이싱 게임입니다. 설치 없이 브라우저에서 바로 플레이할 수 있습니다.</p>
+          <div class="tags"><span>HTML · CSS · JavaScript</span><span>Claude</span></div>
+          <div class="work-links">
+            <a class="btn sm" href="https://sohee9010.github.io/HINT_car/" target="_blank" rel="noopener">새 창에서 플레이 <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+  <script>
+  // 게임은 누를 때만 불러와 페이지가 무거워지지 않게 합니다.
+  (function () {
+    var btn = document.getElementById('car-play');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var f = document.createElement('iframe');
+      f.src = 'https://sohee9010.github.io/HINT_car/';
+      f.title = '날아라 슈퍼카 게임';
+      f.allow = 'fullscreen; autoplay';
+      btn.parentNode.classList.add('playing');
+      btn.replaceWith(f);
+      f.focus();
+    });
+  })();
+  </script>
 
   <section id="contact">
     <div class="in">
