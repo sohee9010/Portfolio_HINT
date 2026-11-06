@@ -15,7 +15,9 @@
     .label img { width: 100%; max-width: 180px; display: block; margin: 8px auto; }
     .label .name { font-size: 20px; font-weight: 800; color: #0b2545; }
     .label .sub { font-size: 12px; color: #6b7686; }
+    .dl { display: inline-block; margin-top: 10px; padding: 6px 14px; border: 1px solid #c9d7ee; border-radius: 8px; color: #1b4f9c; font-weight: 700; font-size: 13px; text-decoration: none; }
     @media print {
+      .dl { display: none; }
       body { background: #fff; }
       header { display: none; }
       .label { break-inside: avoid; }
@@ -31,11 +33,11 @@
     <button onclick="print()">인쇄</button>
   </header>
   <div class="grid">
-    <div class="label"><div class="name">프레스 #1</div><img src="qr/P1.png" alt="프레스 #1 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div></div>
-    <div class="label"><div class="name">프레스 #2</div><img src="qr/P2.png" alt="프레스 #2 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div></div>
-    <div class="label"><div class="name">프레스 #3</div><img src="qr/P3.png" alt="프레스 #3 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div></div>
-    <div class="label"><div class="name">프레스 #4</div><img src="qr/P4.png" alt="프레스 #4 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div></div>
-    <div class="label"><div class="name">전체 설비</div><img src="qr/all.png" alt="전체 설비 QR" /><div class="sub">보전실 · 발표 화면용</div></div>
+    <div class="label"><div class="name">프레스 #1</div><img src="qr/P1.png" alt="프레스 #1 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div><a class="dl" href="qr/P1.png" download="프레스_1_QR.png">다운로드</a></div>
+    <div class="label"><div class="name">프레스 #2</div><img src="qr/P2.png" alt="프레스 #2 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div><a class="dl" href="qr/P2.png" download="프레스_2_QR.png">다운로드</a></div>
+    <div class="label"><div class="name">프레스 #3</div><img src="qr/P3.png" alt="프레스 #3 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div><a class="dl" href="qr/P3.png" download="프레스_3_QR.png">다운로드</a></div>
+    <div class="label"><div class="name">프레스 #4</div><img src="qr/P4.png" alt="프레스 #4 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div><a class="dl" href="qr/P4.png" download="프레스_4_QR.png">다운로드</a></div>
+    <div class="label"><div class="name">전체 설비</div><img src="qr/all.png" alt="전체 설비 QR" /><div class="sub">보전실 · 발표 화면용</div><a class="dl" href="qr/all.png" download="전체_설비_QR.png">다운로드</a></div>
   </div>
 </body>
 </html>

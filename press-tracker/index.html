@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>프레스 설비 보전 트래커</title>
-  <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
   <header class="top">
@@ -13,7 +13,10 @@
         <p class="eyebrow">2팀 설비보전</p>
         <h1>프레스 설비 보전 트래커</h1>
       </div>
-      <select id="eqFilter" aria-label="설비 선택"></select>
+      <div class="top-actions">
+        <button type="button" id="qrBtn" class="qr-btn" aria-haspopup="dialog">설비 QR</button>
+        <select id="eqFilter" aria-label="설비 선택"></select>
+      </div>
     </div>
     <nav class="tabs" role="tablist">
       <button role="tab" data-tab="input" class="active">입력</button>
@@ -63,9 +66,21 @@
             <datalist id="partList"></datalist>
           </label>
         </div>
-        <label>담당자 (가명)
-          <select name="worker"></select>
-        </label>
+        <div class="worker-field">
+          <label for="workerSel">담당자 (가명)</label>
+          <div class="worker-row">
+            <select name="worker" id="workerSel"></select>
+            <button type="button" id="workerToggle" class="ghost" aria-expanded="false">담당자 관리</button>
+          </div>
+          <div id="workerPanel" class="worker-panel" hidden>
+            <div class="worker-add">
+              <input type="text" id="workerInput" maxlength="12" placeholder="예: 보전원 E" aria-label="추가할 담당자 이름" />
+              <button type="button" id="workerAdd" class="ghost strong">추가</button>
+            </div>
+            <p class="hint">실습 데이터는 모두 가상이라 실명 대신 가명으로 등록합니다. 기본 담당자(보전원 A~D)는 지울 수 없습니다.</p>
+            <ul id="workerChips" class="worker-chips"></ul>
+          </div>
+        </div>
         <button type="submit" class="primary">저장</button>
       </form>
     </section>
@@ -74,31 +89,35 @@
     <section id="tab-board" class="tab-panel">
       <div class="kpis" id="kpis"></div>
 
-      <div class="card">
-        <div class="card-head">
-          <h2>설비 · 유형별 현황</h2>
-          <select id="typeFilter" aria-label="고장 유형 필터"></select>
+      <div class="split">
+        <div class="card pane">
+          <div class="card-head">
+            <h2>설비 · 유형별 현황 <span id="comboCount" class="muted"></span></h2>
+            <select id="typeFilter" aria-label="고장 유형 필터"></select>
+          </div>
+          <div class="legend">
+            <span><i class="dot over"></i>권장일 초과</span>
+            <span><i class="dot soon"></i>7일 이내</span>
+            <span><i class="dot ok"></i>정상</span>
+            <span><i class="dot done"></i>점검 완료</span>
+            <span><i class="dot none"></i>데이터 부족</span>
+          </div>
+          <p class="pane-tip">항목을 누르면 오른쪽 이력이 그 설비·유형으로 걸러집니다.</p>
+          <div id="comboList" class="combos scroll"></div>
         </div>
-        <div class="legend">
-          <span><i class="dot over"></i>권장일 초과</span>
-          <span><i class="dot soon"></i>7일 이내</span>
-          <span><i class="dot ok"></i>정상</span>
-          <span><i class="dot done"></i>점검 완료</span>
-          <span><i class="dot none"></i>데이터 부족</span>
-        </div>
-        <div id="comboList" class="combos"></div>
-      </div>
 
-      <div class="card">
-        <div class="card-head">
-          <h2>이력 목록 <span id="listCount" class="muted"></span></h2>
-          <select id="kindFilter" aria-label="구분 필터">
-            <option value="all">전체</option>
-            <option value="repair">고장 수리</option>
-            <option value="inspect">예방 점검</option>
-          </select>
+        <div class="card pane">
+          <div class="card-head">
+            <h2>이력 목록 <span id="listCount" class="muted"></span></h2>
+            <select id="kindFilter" aria-label="구분 필터">
+              <option value="all">전체</option>
+              <option value="repair">고장 수리</option>
+              <option value="inspect">예방 점검</option>
+            </select>
+          </div>
+          <div id="selChip" class="sel-chip" hidden></div>
+          <ul id="recordList" class="records scroll"></ul>
         </div>
-        <ul id="recordList" class="records"></ul>
       </div>
 
       <details class="card formula">
@@ -121,9 +140,19 @@
     <button id="resetBtn" class="link">입력 기록 초기화</button>
   </footer>
 
+  <dialog id="qrDialog" class="qr-dialog" aria-labelledby="qrTitle">
+    <div class="qr-head">
+      <h2 id="qrTitle">설비 QR</h2>
+      <button type="button" id="qrClose" class="ghost" aria-label="닫기">닫기</button>
+    </div>
+    <p class="hint">휴대폰으로 찍으면 해당 설비가 선택된 화면이 열립니다. 이미지를 내려받아 설비에 붙이거나 발표 자료에 넣으세요.</p>
+    <div id="qrGrid" class="qr-grid"></div>
+    <a class="qr-print" href="qr.html" target="_blank" rel="noopener">인쇄용 라벨 페이지 열기 ↗</a>
+  </dialog>
+
   <div id="toast" class="toast" role="status"></div>
 
-  <script src="data.js?v=2"></script>
-  <script src="app.js?v=2"></script>
+  <script src="data.js?v=4"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

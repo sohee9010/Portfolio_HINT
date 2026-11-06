@@ -156,3 +156,17 @@ function inspectRate(combos) {
   const done = due.filter((c) => c.inspection && c.inspection.end <= c.dueAt);
   return { due: due.length, done: done.length, rate: due.length ? (done.length / due.length) * 100 : null };
 }
+
+// ---------- 담당자 (기본 가명 + 직접 추가한 가명) ----------
+const WORKER_KEY = "press-tracker-workers-v1";
+function loadExtraWorkers() {
+  try {
+    return JSON.parse(localStorage.getItem(WORKER_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+function saveExtraWorkers(list) {
+  localStorage.setItem(WORKER_KEY, JSON.stringify(list));
+}
+const allWorkers = () => WORKERS.concat(loadExtraWorkers());

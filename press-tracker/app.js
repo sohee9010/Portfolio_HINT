@@ -5,7 +5,8 @@ const eqName = (id) => EQUIPMENTS.find((e) => e.id === id)?.name ?? id;
 const typeOf = (id) => FAILURE_TYPES.find((t) => t.id === id);
 const typeLabel = (id) => `${id} ${typeOf(id)?.name ?? ""}`;
 
-const state = { tab: "input", eq: "all", type: "all", kind: "all", shown: 30, combosShown: 10 };
+const state = { tab: "input", eq: "all", type: "all", kind: "all", shown: 50, sel: null }; // sel: { eq, type }
+const shortEq = (id) => eqName(id).replace("프레스 ", "");
 
 // ---------- 포맷 ----------
 const pad = (n) => String(n).padStart(2, "0");
@@ -30,6 +31,47 @@ function toast(msg) {
   toast.timer = setTimeout(() => t.classList.remove("show"), 2000);
 }
 
+// ---------- 담당자 관리 ----------
+function renderWorkers(selected) {
+  const sel = $("#workerSel");
+  const keep = selected ?? sel.value;
+  sel.innerHTML = allWorkers().map((w) => `<option>${escapeHtml(w)}</option>`).join("");
+  if (allWorkers().includes(keep)) sel.value = keep;
+  $("#workerChips").innerHTML = allWorkers()
+    .map((w) =>
+      WORKERS.includes(w)
+        ? `<li class="fixed">${escapeHtml(w)}</li>`
+        : `<li>${escapeHtml(w)}<button type="button" data-worker="${escapeHtml(w)}" aria-label="${escapeHtml(w)} 삭제">✕</button></li>`
+    )
+    .join("");
+}
+function addWorker() {
+  const input = $("#workerInput");
+  const name = input.value.trim().replace(/\s+/g, " ");
+  if (!name) return input.focus();
+  if (allWorkers().includes(name)) {
+    toast("이미 있는 담당자입니다");
+    return input.select();
+  }
+  saveExtraWorkers(loadExtraWorkers().concat(name));
+  input.value = "";
+  renderWorkers(name);
+  toast(`${name} 추가됨`);
+}
+
+// ---------- 설비 QR ----------
+const QR_ITEMS = EQUIPMENTS.map((e) => ({ id: e.id, name: e.name })).concat({ id: "all", name: "전체 설비" });
+function openQr() {
+  $("#qrGrid").innerHTML = QR_ITEMS.map(
+    (q) => `<figure class="qr-item">
+      <img src="qr/${q.id}.png" alt="${q.name} QR 코드" loading="lazy" />
+      <figcaption>${q.name}</figcaption>
+      <a class="ghost strong" href="qr/${q.id}.png" download="${q.name.replace(" #", "_").replace(/ /g, "_")}_QR.png">다운로드</a>
+    </figure>`
+  ).join("");
+  $("#qrDialog").showModal();
+}
+
 // ---------- 입력 폼 ----------
 function setupControls() {
   const eqOpts = EQUIPMENTS.map((e) => `<option value="${e.id}">${e.name}</option>`).join("");
@@ -39,7 +81,7 @@ function setupControls() {
   const f = $("#recForm");
   f.eq.innerHTML = eqOpts;
   f.type.innerHTML = typeOpts;
-  f.worker.innerHTML = WORKERS.map((w) => `<option>${w}</option>`).join("");
+  renderWorkers();
 
   // QR로 접속: ?eq=P2 이면 해당 설비가 선택된 상태로 열림
   const qEq = new URLSearchParams(location.search).get("eq");
@@ -152,50 +194,57 @@ function renderCombos(combos) {
   const list = combos
     .filter((c) => state.type === "all" || c.t.id === state.type)
     .sort((a, b) => ORDER[a.key] - ORDER[b.key] || (a.st.daysToDue ?? 0) - (b.st.daysToDue ?? 0));
-  const rows = list.slice(0, state.combosShown).map(({ eq, t, st, key }) => {
+  $("#comboCount").textContent = `${list.length}개`;
+  const rows = list.map(({ eq, t, st, key }) => {
     const metrics = !st.count
       ? "고장 기록 없음"
       : st.insufficient
-      ? `${st.count}건 · MTTR ${Math.round(st.mttr)}분 · MTBF 계산에 2건 이상 필요`
+      ? `${st.count}건 · MTTR ${Math.round(st.mttr)}분 · MTBF 계산엔 2건 이상 필요`
       : `${st.count}건 · MTTR ${Math.round(st.mttr)}분 · MTBF ${st.mtbfDays.toFixed(1)}일`;
     const right =
       key === "none"
-        ? `<div class="due">데이터 부족</div>`
-        : `<div class="due">점검 권장 ${fmtDate(st.dueAt, false)}</div>
-           <div class="state">${dueText(st)}</div>
-           <div class="next">고장 예상 ${fmtDate(st.nextAt, false)}</div>`;
-    return `<div class="combo ${key}">
+        ? `<div class="state">데이터 부족</div>`
+        : `<div class="state">${dueText(st)}</div>
+           <div class="due">권장 ${fmtDate(st.dueAt, false)} · 예상 ${fmtDate(st.nextAt, false)}</div>`;
+    const selected = state.sel && state.sel.eq === eq.id && state.sel.type === t.id;
+    return `<button type="button" class="combo ${key}${selected ? " selected" : ""}" data-eq="${eq.id}" data-type="${t.id}" aria-pressed="${selected}">
       <i class="dot ${key}"></i>
       <div class="c-main">
-        <div class="c-title">${eq.name} · <b>${t.id}</b> ${t.name}</div>
+        <div class="c-title"><span class="eqno">${shortEq(eq.id)}</span><b>${t.id}</b> ${t.name}</div>
         <div class="c-meta">${metrics}</div>
       </div>
       <div class="c-right">${right}</div>
-    </div>`;
+    </button>`;
   });
-  if (list.length > state.combosShown)
-    rows.push(`<button class="more" id="moreCombos">더 보기 (${list.length - state.combosShown}개)</button>`);
   $("#comboList").innerHTML = rows.join("") || `<p class="muted">표시할 항목이 없습니다.</p>`;
 }
 
 function renderRecords(records) {
+  const sel = state.sel;
   const list = records.filter(
-    (r) => (state.type === "all" || r.type === state.type) && (state.kind === "all" || r.kind === state.kind)
+    (r) =>
+      (sel ? r.eq === sel.eq && r.type === sel.type : state.type === "all" || r.type === state.type) &&
+      (state.kind === "all" || r.kind === state.kind)
   );
   $("#listCount").textContent = `${list.length}건`;
+  const chip = $("#selChip");
+  chip.hidden = !sel;
+  if (sel) chip.innerHTML = `<span>${eqName(sel.eq)} · <b>${sel.type}</b> ${typeOf(sel.type).name}</span><button type="button" id="clearSel" aria-label="선택 해제">전체 보기 ✕</button>`;
+
   const items = list.slice(0, state.shown).map((r) => {
     const isRepair = r.kind === "repair";
+    const d = new Date(r.start);
     const detail = [r.cause, r.action, r.parts && `교체: ${r.parts}`].filter(Boolean).map(escapeHtml).join(" · ");
-    return `<li>
+    return `<li class="rec">
+      <div class="r-date">${d.getMonth() + 1}/${d.getDate()}<small>${pad(d.getHours())}:${pad(d.getMinutes())}</small></div>
       <div class="rec-main">
-        <div class="rec-title"><span class="kind ${r.kind}">${isRepair ? "고장 수리" : "예방 점검"}</span>${typeLabel(r.type)}${
-      r.virtual ? "" : '<span class="tag">직접 입력</span>'
-    }</div>
-        <div class="rec-sub">${eqName(r.eq)} · ${fmtDate(r.start)} · ${escapeHtml(r.worker)}</div>
-        <div class="rec-sub">${detail}</div>
+        <div class="rec-title"><span class="kind ${r.kind}">${isRepair ? "수리" : "점검"}</span>${
+      sel ? "" : `<span class="eqno">${shortEq(r.eq)}</span>`
+    }<b>${r.type}</b> ${typeOf(r.type).name}${r.virtual ? "" : '<span class="tag">직접 입력</span>'}</div>
+        <div class="rec-sub">${detail} · ${escapeHtml(r.worker)}</div>
       </div>
       <div class="rec-side">
-        <div class="rec-dur">${Math.round(durationMin(r))}분</div>
+        <div class="rec-dur">${Math.round(durationMin(r))}<small>분</small></div>
         ${r.virtual ? "" : `<button class="del" data-id="${r.id}">삭제</button>`}
       </div>
     </li>`;
@@ -221,6 +270,30 @@ function render() {
 }
 
 function bindEvents() {
+  $("#workerToggle").addEventListener("click", (e) => {
+    const panel = $("#workerPanel");
+    panel.hidden = !panel.hidden;
+    e.currentTarget.setAttribute("aria-expanded", String(!panel.hidden));
+    if (!panel.hidden) $("#workerInput").focus();
+  });
+  $("#workerAdd").addEventListener("click", addWorker);
+  $("#workerInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addWorker();
+    }
+  });
+  $("#workerChips").addEventListener("click", (e) => {
+    const name = e.target.dataset?.worker;
+    if (!name || !confirm(`담당자 '${name}'을(를) 목록에서 지울까요? 이미 저장된 기록은 그대로 남습니다.`)) return;
+    saveExtraWorkers(loadExtraWorkers().filter((w) => w !== name));
+    renderWorkers();
+  });
+  $("#qrBtn").addEventListener("click", openQr);
+  $("#qrClose").addEventListener("click", () => $("#qrDialog").close());
+  $("#qrDialog").addEventListener("click", (e) => {
+    if (e.target.id === "qrDialog") e.target.close(); // 바깥 영역 클릭 시 닫기
+  });
   document.querySelectorAll(".tabs button").forEach((b) =>
     b.addEventListener("click", () => {
       state.tab = b.dataset.tab;
@@ -229,20 +302,21 @@ function bindEvents() {
   );
   $("#eqFilter").addEventListener("change", (e) => {
     state.eq = e.target.value;
-    state.shown = 30;
-    state.combosShown = 10;
+    state.shown = 50;
+    state.sel = null;
     if (state.eq !== "all") $("#recForm").eq.value = state.eq;
     onTypeChange();
     render();
   });
   $("#typeFilter").addEventListener("change", (e) => {
     state.type = e.target.value;
-    state.shown = 30;
+    state.shown = 50;
+    state.sel = null;
     renderBoard();
   });
   $("#kindFilter").addEventListener("change", (e) => {
     state.kind = e.target.value;
-    state.shown = 30;
+    state.shown = 50;
     renderBoard();
   });
 
@@ -276,14 +350,27 @@ function bindEvents() {
   });
 
   $("#comboList").addEventListener("click", (e) => {
-    if (e.target.id === "moreCombos") {
-      state.combosShown += 10;
+    const row = e.target.closest(".combo");
+    if (!row) return;
+    const { eq, type } = row.dataset;
+    const same = state.sel && state.sel.eq === eq && state.sel.type === type;
+    state.sel = same ? null : { eq, type };
+    state.shown = 50;
+    renderBoard();
+    $("#recordList").scrollTop = 0;
+    // 화면이 좁아 위아래로 쌓일 때는 이력 목록으로 이동
+    if (!same && window.matchMedia("(max-width: 900px)").matches)
+      $("#selChip").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  $("#selChip").addEventListener("click", (e) => {
+    if (e.target.id === "clearSel") {
+      state.sel = null;
       renderBoard();
     }
   });
   $("#recordList").addEventListener("click", (e) => {
     if (e.target.id === "moreBtn") {
-      state.shown += 30;
+      state.shown += 50;
       renderBoard();
     }
     const id = e.target.dataset?.id;
