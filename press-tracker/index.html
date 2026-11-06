@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>프레스 설비 고장 기록·예측</title>
+  <title>프레스 설비 보전 트래커</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,108 +11,113 @@
     <div class="top-inner">
       <div>
         <p class="eyebrow">2팀 설비보전</p>
-        <h1>고장 기록 · 예측</h1>
+        <h1>프레스 설비 보전 트래커</h1>
       </div>
       <select id="eqFilter" aria-label="설비 선택"></select>
     </div>
     <nav class="tabs" role="tablist">
-      <button role="tab" data-tab="input" class="active">고장 입력</button>
-      <button role="tab" data-tab="list">고장 목록</button>
-      <button role="tab" data-tab="predict">고장 예측</button>
+      <button role="tab" data-tab="input" class="active">입력</button>
+      <button role="tab" data-tab="board">목록 · 요약</button>
     </nav>
   </header>
 
   <main>
-    <!-- 1. 고장 입력 -->
+    <!-- 화면 1. 입력 폼 -->
     <section id="tab-input" class="tab-panel active">
-      <form id="failForm" class="card form">
-        <h2>고장 입력</h2>
-        <label>설비
-          <select name="eq" required></select>
-        </label>
-        <fieldset>
-          <legend>고장 유형</legend>
-          <div id="typeChips" class="chips"></div>
-        </fieldset>
+      <form id="recForm" class="card form" novalidate>
+        <div class="seg" role="radiogroup" aria-label="구분">
+          <label><input type="radio" name="kind" value="repair" checked /><span>고장 수리</span></label>
+          <label><input type="radio" name="kind" value="inspect" /><span>예방 점검</span></label>
+        </div>
+
         <div class="row">
-          <label>고장 발생 시각
+          <label>설비
+            <select name="eq"></select>
+          </label>
+          <label><span data-k="typeLabel">고장 유형</span>
+            <select name="type"></select>
+          </label>
+        </div>
+        <p id="typeHint" class="hint"></p>
+
+        <div class="row">
+          <label><span data-k="startLabel">발생 일시</span>
             <input type="datetime-local" name="start" required />
           </label>
-          <label>수리 완료 시각
+          <label>완료 일시
             <input type="datetime-local" name="end" required />
           </label>
         </div>
-        <p id="durationHint" class="hint">수리 시간이 자동으로 계산됩니다.</p>
+        <p id="durationHint" class="hint">수리시간이 자동으로 계산됩니다.</p>
+
+        <label data-only="repair">원인
+          <input type="text" name="cause" list="causeList" placeholder="목록에서 고르거나 직접 입력" />
+          <datalist id="causeList"></datalist>
+        </label>
         <div class="row">
           <label>조치 내용
             <select name="action"></select>
           </label>
-          <label>작업자
-            <input type="text" name="worker" placeholder="예: 김반장" required />
+          <label>교체 부품
+            <input type="text" name="parts" list="partList" placeholder="없으면 비워 두기" />
+            <datalist id="partList"></datalist>
           </label>
         </div>
-        <label>메모 (선택)
-          <textarea name="memo" rows="2" placeholder="증상, 교체 부품 등"></textarea>
+        <label>담당자 (가명)
+          <select name="worker"></select>
         </label>
         <button type="submit" class="primary">저장</button>
       </form>
     </section>
 
-    <!-- 2. 고장 목록 -->
-    <section id="tab-list" class="tab-panel">
+    <!-- 화면 2. 목록 · 요약 -->
+    <section id="tab-board" class="tab-panel">
+      <div class="kpis" id="kpis"></div>
+
       <div class="card">
-        <h2>유형별 요약</h2>
-        <div class="table-wrap">
-          <table class="summary">
-            <thead>
-              <tr><th>고장 유형</th><th>횟수</th><th>MTTR</th><th>마지막 고장 후</th></tr>
-            </thead>
-            <tbody id="summaryBody"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="card">
-        <div class="list-head">
-          <h2>고장 기록 <span id="listCount" class="muted"></span></h2>
+        <div class="card-head">
+          <h2>설비 · 유형별 현황</h2>
           <select id="typeFilter" aria-label="고장 유형 필터"></select>
+        </div>
+        <div class="legend">
+          <span><i class="dot over"></i>권장일 초과</span>
+          <span><i class="dot soon"></i>7일 이내</span>
+          <span><i class="dot ok"></i>정상</span>
+          <span><i class="dot done"></i>점검 완료</span>
+          <span><i class="dot none"></i>데이터 부족</span>
+        </div>
+        <div id="comboList" class="combos"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>이력 목록 <span id="listCount" class="muted"></span></h2>
+          <select id="kindFilter" aria-label="구분 필터">
+            <option value="all">전체</option>
+            <option value="repair">고장 수리</option>
+            <option value="inspect">예방 점검</option>
+          </select>
         </div>
         <ul id="recordList" class="records"></ul>
       </div>
-    </section>
 
-    <!-- 3. 고장 예측 -->
-    <section id="tab-predict" class="tab-panel">
-      <div class="kpis" id="kpis"></div>
-      <div class="card">
-        <h2>다음 고장 예측 <span class="muted">평균 고장 간격(MTBF) 기준</span></h2>
-        <div id="predictList" class="predict"></div>
-      </div>
-      <div class="grid2">
-        <div class="card">
-          <h2>유형별 고장 횟수</h2>
-          <div id="chartCount"></div>
-        </div>
-        <div class="card">
-          <h2>유형별 MTTR (분)</h2>
-          <div id="chartMttr"></div>
-        </div>
-      </div>
       <details class="card formula">
-        <summary>계산 공식 보기</summary>
+        <summary>계산 수식 보기</summary>
         <ul>
-          <li><b>MTTR</b> (평균 수리 시간) = 총 수리 시간 ÷ 고장 횟수</li>
-          <li><b>MTBF</b> (평균 고장 간격) = 총 가동 시간 ÷ 고장 횟수</li>
-          <li><b>가동 시간</b> = 관측 기간 − 고장 정지 시간 (24시간 풀가동 가정)</li>
-          <li><b>가동률</b> = MTBF ÷ (MTBF + MTTR)</li>
-          <li><b>다음 고장 예상</b> = 마지막 고장 수리 완료 시각 + MTBF</li>
+          <li>수리시간 = 완료 일시 − 발생 일시</li>
+          <li><b>MTTR</b> = 수리시간 합 ÷ 고장 건수</li>
+          <li><b>MTBF</b> = (마지막 고장일 − 첫 고장일) ÷ (고장 건수 − 1)</li>
+          <li>다음 고장 예상일 = 마지막 고장일 + MTBF</li>
+          <li>점검 권장일 = 마지막 고장일 + 0.8 × MTBF (안전계수 0.8은 팀 가정값)</li>
+          <li>점검 이행률 = 권장일 이전에 완료한 점검 건 ÷ 점검 권장 건</li>
         </ul>
-        <p class="muted">가상 데이터 기반의 평균 예측입니다. 실제 현장에서는 센서 데이터와 딥러닝으로 고도화할 수 있습니다.</p>
+        <p class="muted">모든 값은 설비 × 고장 유형별로 계산하며, 고장이 2건 미만이면 '데이터 부족'으로 표시합니다. 모든 데이터는 가상입니다.</p>
       </details>
     </section>
   </main>
 
   <footer class="foot">
-    <span>가상 데이터 (최근 90일) + 직접 입력한 기록</span>
+    <span>가상 데이터 (최근 180일) + 직접 입력한 기록</span>
     <button id="resetBtn" class="link">입력 기록 초기화</button>
   </footer>
 
