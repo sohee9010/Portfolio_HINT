@@ -4,7 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>5조 설비보전 · 프레스 설비 보전 트래커</title>
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=10" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 <body>
   <header class="top">
@@ -93,8 +101,23 @@
           <h2 id="diagramTitle">프레스 고장 부위도 <span class="muted">가상 모델</span></h2>
           <span id="diagramEq" class="diagram-eq"></span>
         </div>
-        <p class="pane-tip">부위 색은 선택한 설비의 점검 상태입니다. 부위나 번호를 누르면 왼쪽 고장 유형이 바뀝니다.</p>
-        <div id="pressSvg" class="press-svg"></div>
+        <div class="view-bar">
+          <div class="view-toggle" role="tablist" aria-label="보기 방식">
+            <button type="button" role="tab" data-view="plan" class="on" aria-selected="true">도면</button>
+            <button type="button" role="tab" data-view="3d" aria-selected="false">3D</button>
+          </div>
+          <p id="viewTip" class="pane-tip">부위 색은 선택한 설비의 점검 상태입니다. 부위나 번호를 누르면 왼쪽 고장 유형이 바뀝니다.</p>
+        </div>
+        <div class="viewer">
+          <div id="pressSvg" class="press-svg"></div>
+          <div id="press3d" class="press-3d" hidden>
+            <div class="p3d-msg" id="p3dMsg">3D 모델을 불러오는 중…</div>
+            <div class="p3d-ctrl">
+              <button type="button" id="p3dRun" class="p3d-btn">작동 정지</button>
+              <button type="button" id="p3dReset" class="p3d-btn">시점 초기화</button>
+            </div>
+          </div>
+        </div>
         <div class="legend mini">
           <span><i class="dot over"></i>권장일 초과</span>
           <span><i class="dot soon"></i>7일 이내</span>
@@ -158,11 +181,8 @@
 
   <dialog id="alertDialog" class="alert-dialog" aria-labelledby="alertTitle">
     <div class="alert-top">
-      <div class="alert-icon" aria-hidden="true">!</div>
-      <div>
-        <h2 id="alertTitle">오늘 확인할 긴급 점검</h2>
-        <p id="alertSummary" class="alert-summary"></p>
-      </div>
+      <h2 id="alertTitle">오늘 확인할 긴급 점검</h2>
+      <p id="alertSummary" class="alert-summary"></p>
     </div>
     <ul id="alertList" class="alert-list"></ul>
     <p id="alertMore" class="hint"></p>
@@ -187,8 +207,8 @@
 
   <div id="toast" class="toast" role="status"></div>
 
-  <script src="data.js?v=9"></script>
-  <script src="press-diagram.js?v=9"></script>
-  <script src="app.js?v=9"></script>
+  <script src="data.js?v=10"></script>
+  <script src="press-diagram.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>

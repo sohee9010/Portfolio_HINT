@@ -171,6 +171,7 @@ function renderDiagram() {
     })
     .join("");
   // 선택 부위 상세
+  if (p3d) p3d.update(Object.fromEntries(Object.entries(info).map(([k, v]) => [k, v.key])), selType);
   const t = typeOf(selType);
   const { st, key } = info[selType];
   const metrics =
@@ -183,6 +184,40 @@ function renderDiagram() {
     <div class="pi-sub">대표 증상: ${escapeHtml(t.symptom)}</div>
     <div class="pi-sub">${metrics}</div>${due}`;
 }
+// 도면 / 3D 전환 (3D는 처음 열 때 불러옴)
+let p3d = null;
+let p3dLoading = null;
+const VIEW_TIP = {
+  plan: "부위 색은 선택한 설비의 점검 상태입니다. 부위나 번호를 누르면 왼쪽 고장 유형이 바뀝니다.",
+  "3d": "드래그로 360° 돌려 보고, 휠·두 손가락으로 확대합니다. 부위나 번호를 누르면 왼쪽 고장 유형이 바뀝니다.",
+};
+async function setView(view) {
+  document.querySelectorAll(".view-toggle button").forEach((b) => {
+    const on = b.dataset.view === view;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-selected", String(on));
+  });
+  $("#viewTip").textContent = VIEW_TIP[view];
+  $("#pressSvg").hidden = view !== "plan";
+  $("#press3d").hidden = view !== "3d";
+  if (view !== "3d") return p3d?.setActive(false);
+  if (p3d) {
+    p3d.setActive(true);
+    return renderDiagram();
+  }
+  try {
+    p3dLoading = p3dLoading || import("./press3d.js?v=11");
+    const mod = await p3dLoading;
+    if (!p3d) p3d = mod.mountPress3D($("#press3d"), { onPick: pickPart });
+    $("#p3dMsg").hidden = true;
+    renderDiagram();
+  } catch (err) {
+    console.warn(err);
+    p3dLoading = null;
+    $("#p3dMsg").textContent = "3D 모델을 불러오지 못했습니다. 인터넷 연결을 확인하고 다시 눌러 주세요.";
+  }
+}
+
 function pickPart(code) {
   const f = $("#recForm");
   if (!code || f.type.value === code) return;
@@ -281,7 +316,7 @@ function renderCombos(combos) {
     return `<button type="button" class="combo ${key}${selected ? " selected" : ""}" data-eq="${eq.id}" data-type="${t.id}" aria-pressed="${selected}">
       <i class="dot ${key}"></i>
       <div class="c-main">
-        <div class="c-title"><span class="eqno">${shortEq(eq.id)}</span><b>${t.id}</b> ${hl(t.name)}</div>
+        <div class="c-title"><span class="eqno">${shortEq(eq.id)}</span><b>${t.id}</b> ${t.name}</div>
         <div class="c-meta">${metrics}</div>
       </div>
       <div class="c-right">${right}</div>
@@ -300,7 +335,7 @@ function renderRecords(records) {
   $("#listCount").textContent = `${list.length}건`;
   const chip = $("#selChip");
   chip.hidden = !sel;
-  if (sel) chip.innerHTML = `<span>${eqName(sel.eq)} · <b>${sel.type}</b> ${hl(typeOf(sel.type).name)}</span><button type="button" id="clearSel" aria-label="선택 해제">전체 보기 ✕</button>`;
+  if (sel) chip.innerHTML = `<span>${eqName(sel.eq)} · <b>${sel.type}</b> ${typeOf(sel.type).name}</span><button type="button" id="clearSel" aria-label="선택 해제">전체 보기 ✕</button>`;
 
   const items = list.slice(0, state.shown).map((r) => {
     const isRepair = r.kind === "repair";
@@ -311,7 +346,7 @@ function renderRecords(records) {
       <div class="rec-main">
         <div class="rec-title"><span class="kind ${r.kind}">${isRepair ? "수리" : "점검"}</span>${
       sel ? "" : `<span class="eqno">${shortEq(r.eq)}</span>`
-    }<b>${r.type}</b> ${hl(typeOf(r.type).name)}${r.virtual ? "" : '<span class="tag">직접 입력</span>'}</div>
+    }<b>${r.type}</b> ${typeOf(r.type).name}${r.virtual ? "" : '<span class="tag">직접 입력</span>'}</div>
         <div class="rec-sub">${detail} · ${escapeHtml(r.worker)}</div>
       </div>
       <div class="rec-side">
@@ -356,14 +391,14 @@ function showStartupAlert() {
   const soon = urgent.length - over;
   const where = state.eq === "all" ? "전체 설비" : eqName(state.eq);
   $("#alertSummary").innerHTML =
-    `${where} 기준 <b class="t-over">권장일 초과 ${over}건</b> · <b class="t-soon">7일 이내 ${soon}건</b>`;
+    `<span class="sum-eq">${where}</span><span class="sum-pill"><i class="dot over"></i>권장일 초과 <b>${over}</b></span><span class="sum-pill"><i class="dot soon"></i>7일 이내 <b>${soon}</b></span>`;
   const TOP = 5;
   $("#alertList").innerHTML = urgent
     .slice(0, TOP)
     .map(
       ({ eq, t, st, key }) => `<li class="${key}">
         <i class="dot ${key}"></i>
-        <div class="a-main"><span class="eqno">${shortEq(eq.id)}</span><b>${t.id}</b> ${hl(t.name)}
+        <div class="a-main"><span class="eqno">${shortEq(eq.id)}</span><b>${t.id}</b> ${t.name}
           <div class="a-sub">점검 권장 ${fmtDate(st.dueAt, false)} · 고장 예상 ${fmtDate(st.nextAt, false)} · MTTR ${Math.round(st.mttr)}분</div></div>
         <div class="a-state">${dueText(st)}</div>
       </li>`
@@ -408,6 +443,11 @@ function bindEvents() {
   $("#alertClose").addEventListener("click", () => closeAlert(false));
   $("#alertGo").addEventListener("click", () => closeAlert(true));
   $("#alertDialog").addEventListener("cancel", () => closeAlert(false)); // Esc
+  document.querySelectorAll(".view-toggle button").forEach((b) => b.addEventListener("click", () => setView(b.dataset.view)));
+  $("#p3dRun").addEventListener("click", (e) => {
+    if (p3d) e.currentTarget.textContent = p3d.toggleRun() ? "작동 정지" : "작동 재생";
+  });
+  $("#p3dReset").addEventListener("click", () => p3d?.resetView());
   const pressBox = $("#pressSvg");
   pressBox.addEventListener("click", (e) => pickPart(e.target.closest("[data-type]")?.dataset.type));
   pressBox.addEventListener("keydown", (e) => {
