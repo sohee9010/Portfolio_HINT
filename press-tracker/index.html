@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>5조 설비보전 · 프레스 설비 보전 트래커</title>
-  <link rel="stylesheet" href="style.css?v=7" />
+  <link rel="stylesheet" href="style.css?v=9" />
 </head>
 <body>
   <header class="top">
@@ -27,6 +27,7 @@
   <main>
     <!-- 화면 1. 입력 폼 -->
     <section id="tab-input" class="tab-panel active">
+      <div class="input-split">
       <form id="recForm" class="card form" novalidate>
         <div class="seg" role="radiogroup" aria-label="구분">
           <label><input type="radio" name="kind" value="repair" checked /><span>고장 수리</span></label>
@@ -86,6 +87,24 @@
         </div>
         <button type="submit" class="primary">저장</button>
       </form>
+
+      <aside class="card diagram" aria-labelledby="diagramTitle">
+        <div class="card-head">
+          <h2 id="diagramTitle">프레스 고장 부위도 <span class="muted">가상 모델</span></h2>
+          <span id="diagramEq" class="diagram-eq"></span>
+        </div>
+        <p class="pane-tip">부위 색은 선택한 설비의 점검 상태입니다. 부위나 번호를 누르면 왼쪽 고장 유형이 바뀝니다.</p>
+        <div id="pressSvg" class="press-svg"></div>
+        <div class="legend mini">
+          <span><i class="dot over"></i>권장일 초과</span>
+          <span><i class="dot soon"></i>7일 이내</span>
+          <span><i class="dot ok"></i>정상</span>
+          <span><i class="dot done"></i>점검 완료</span>
+          <span><i class="dot none"></i>데이터 부족</span>
+        </div>
+        <div id="partInfo" class="part-info"></div>
+      </aside>
+      </div>
     </section>
 
     <!-- 화면 2. 목록 · 요약 -->
@@ -168,7 +187,8 @@
 
   <div id="toast" class="toast" role="status"></div>
 
-  <script src="data.js?v=7"></script>
-  <script src="app.js?v=7"></script>
+  <script src="data.js?v=9"></script>
+  <script src="press-diagram.js?v=9"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

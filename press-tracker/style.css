@@ -379,3 +379,92 @@ a.ghost { display: inline-flex; align-items: center; justify-content: center; te
 }
 .combo { border-color: #d6dde7; }
 .qr-head .ghost, .alert-btns .ghost { min-height: 0; }
+
+/* ---------- 고장 상태어 강조 ---------- */
+em.kw { font-style: normal; font-weight: 800; color: #c2410c; background: linear-gradient(transparent 62%, #ffe2c7 62%); padding: 0 1px; }
+.combo.over em.kw { background: linear-gradient(transparent 62%, #ffd0c2 62%); }
+
+/* ---------- 입력 + 고장 부위도 ---------- */
+.input-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 20px; align-items: start; }
+#tab-input .input-split .card { max-width: none; margin: 0; }
+.diagram { position: sticky; top: 112px; }
+.diagram-eq { font-size: 13px; font-weight: 700; color: var(--navy); background: var(--blue-soft); padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.press-svg { background: linear-gradient(#f7f9fc, #eef2f7); border: 1px solid #dbe2ea; border-radius: 12px; padding: 8px; }
+.press-svg svg { display: block; width: 100%; height: auto; }
+.legend.mini { margin: 10px 0 0; }
+
+/* 도면 기본 */
+.press-svg .ground { stroke: #9aa8ba; stroke-width: 1.5; stroke-dasharray: 2 4; }
+.press-svg .frame rect { fill: #e3e9f0; stroke: #5b6b80; stroke-width: 1.6; }
+.press-svg .tie { stroke: #9aa8ba; stroke-width: 1; stroke-dasharray: 6 4; }
+.press-svg .cutwin { fill: #fbfcfe; stroke: #7d8da3; stroke-width: 1.2; stroke-dasharray: 5 3; }
+.press-svg .rail { fill: #c7d1dd; stroke: #7d8da3; }
+.press-svg .mech { fill: #c2ccd8; stroke: #5b6b80; stroke-width: 1.2; }
+.press-svg .pin { fill: #fff; stroke: #5b6b80; stroke-width: 1.5; }
+.press-svg .slide { fill: #d5dde7; stroke: #5b6b80; stroke-width: 1.6; }
+.press-svg .blank { fill: #e0a458; stroke: #b07a32; stroke-width: .8; }
+.press-svg .blankpart { fill: #e0a458; }
+.press-svg .bolster { fill: #c2ccd8; stroke: #5b6b80; stroke-width: 1.2; }
+.press-svg .cap { font: 700 11px system-ui, sans-serif; fill: #7d8da3; text-anchor: middle; letter-spacing: 2px; }
+.press-svg .cap.small { font-size: 9px; }
+
+/* 고장 부위: 상태 색 */
+.press-svg .part { cursor: pointer; outline: none; }
+.press-svg .part .pz { fill: #cfd7e2; stroke: #4b5b70; stroke-width: 1.4; transition: fill .2s, stroke .2s; }
+.press-svg .part .pz.thin { stroke-width: .6; }
+.press-svg .part .detail { stroke: #4b5b70; stroke-width: 1; opacity: .7; }
+.press-svg .part .detail-fill { fill: #f4f6f9; stroke: #4b5b70; stroke-width: 1; }
+.press-svg .part .teeth { fill: none; stroke: #4b5b70; stroke-width: 2; stroke-dasharray: 2 3; }
+.press-svg .part .belt { stroke: #4b5b70; stroke-width: 3; stroke-linecap: round; }
+.press-svg .part .rod { stroke: #4b5b70; stroke-width: 3; fill: none; stroke-linecap: round; }
+.press-svg .part .pipe { stroke: #4b5b70; stroke-width: 2.5; fill: none; stroke-linejoin: round; }
+.press-svg .part .oilline { stroke-dasharray: 6 3; }
+.press-svg .part .screen { fill: #0b2545; }
+.press-svg .part .estop { fill: #d64545; stroke: #7a1f1f; }
+.press-svg .part .beam { stroke: #d64545; stroke-width: 1; stroke-dasharray: 3 4; opacity: .6; }
+
+.press-svg .part.st-over .pz { fill: #f3a6a6; stroke: #a12a2a; }
+.press-svg .part.st-soon .pz { fill: #f5d48a; stroke: #8a5d00; }
+.press-svg .part.st-ok .pz { fill: #b5dcc3; stroke: #23683f; }
+.press-svg .part.st-done .pz { fill: #b6cbee; stroke: #1b4f9c; }
+.press-svg .part.st-none .pz { fill: #dfe3e9; stroke: #8792a2; }
+.press-svg .part:hover .pz, .press-svg .part:focus-visible .pz { stroke-width: 2.6; filter: brightness(1.05); }
+.press-svg .part.sel .pz { stroke: #1b4f9c; stroke-width: 3; }
+.press-svg .part.sel { filter: drop-shadow(0 0 5px rgba(27, 79, 156, .75)); }
+.press-svg .part.sel .pipe, .press-svg .part.sel .rod, .press-svg .part.sel .belt { stroke: #1b4f9c; }
+
+/* 번호 마커 */
+.press-svg .marker { cursor: pointer; outline: none; }
+.press-svg .marker .leader { stroke: #7d8da3; stroke-width: 1.2; stroke-dasharray: 3 3; }
+.press-svg .marker .tip { fill: #4b5b70; }
+.press-svg .marker .badge { stroke: #fff; stroke-width: 2.5; }
+.press-svg .marker text { font: 800 10.5px system-ui, sans-serif; fill: #fff; pointer-events: none; }
+.press-svg .m-over .badge { fill: var(--over); }
+.press-svg .m-soon .badge { fill: var(--soon); }
+.press-svg .m-ok .badge { fill: var(--ok); }
+.press-svg .m-done .badge { fill: var(--done); }
+.press-svg .m-none .badge { fill: #8792a2; }
+.press-svg .marker.sel .badge { stroke: #0b2545; stroke-width: 3.5; }
+.press-svg .marker.sel .leader { stroke: #1b4f9c; stroke-width: 2; stroke-dasharray: none; }
+.press-svg .marker:hover .badge, .press-svg .marker:focus-visible .badge { stroke: #0b2545; }
+
+/* 선택 부위 상세 */
+.part-info { margin-top: 12px; padding: 14px; border-radius: 12px; background: #f6f8fb; border: 1px solid #dbe2ea; }
+.pi-head { font-size: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pi-head b { color: var(--navy); }
+.pi-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.pi-due { font-size: 13px; margin-top: 6px; color: var(--text); }
+.pi-badge { font-size: 12px; font-weight: 800; color: #fff; border-radius: 6px; padding: 2px 8px; }
+.pi-badge.over { background: var(--over); }
+.pi-badge.soon { background: var(--soon); }
+.pi-badge.ok { background: var(--ok); }
+.pi-badge.done { background: var(--done); }
+.pi-badge.none { background: #8792a2; }
+
+@media (max-width: 1000px) {
+  .input-split { grid-template-columns: minmax(0, 1fr); }
+  .diagram { position: static; order: -1; }
+}
+.row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.form input, .form select { min-width: 0; }
+@media (max-width: 640px) { .row { grid-template-columns: minmax(0, 1fr); } }

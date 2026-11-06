@@ -27,6 +27,9 @@ function toLocalInput(ms) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 const days = (d) => (Math.abs(d) < 1 ? "1일 미만" : `${Math.round(Math.abs(d))}일`);
+// 고장 유형 이름의 핵심 상태어(이상·마모·불량 등) 강조
+const KEYWORDS = /(이상|마모|불량|누설|작동|오급송)/g;
+const hl = (name) => escapeHtml(name).replace(KEYWORDS, '<em class="kw">$1</em>');
 function escapeHtml(s = "") {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 }
@@ -133,6 +136,58 @@ function onTypeChange() {
   }
   $("#typeHint").textContent = hint;
   updateDuration();
+  renderDiagram();
+}
+
+// ---------- 프레스 고장 부위도 ----------
+const STATUS_LABEL = { over: "권장일 초과", soon: "7일 이내", ok: "정상", done: "점검 완료", none: "데이터 부족" };
+function renderDiagram() {
+  const box = $("#pressSvg");
+  if (!box.firstElementChild) box.innerHTML = PRESS_SVG;
+  const f = $("#recForm");
+  const eq = f.eq.value;
+  const selType = f.type.value;
+  const recs = allRecords().filter((r) => r.eq === eq);
+  $("#diagramEq").textContent = `${eqName(eq)} 기준`;
+  const info = {};
+  FAILURE_TYPES.forEach((t) => {
+    const st = comboStats(recs.filter((r) => r.type === t.id));
+    const key = st.insufficient || !st.count ? "none" : st.status;
+    info[t.id] = { st, key };
+    const g = box.querySelector(`.part[data-type="${t.id}"]`);
+    g.setAttribute("class", `part st-${key}${t.id === selType ? " sel" : ""}`);
+    g.setAttribute("aria-pressed", String(t.id === selType));
+  });
+  // 번호 마커
+  box.querySelector("#markers").innerHTML = Object.entries(PRESS_MARKERS)
+    .map(([code, [x, y, tx, ty]]) => {
+      const k = info[code].key;
+      return `<g class="marker m-${k}${code === selType ? " sel" : ""}" data-type="${code}" tabindex="0" role="button" aria-label="${code} 선택">
+        <line x1="${x}" y1="${y}" x2="${tx}" y2="${ty}" class="leader"/>
+        <circle cx="${tx}" cy="${ty}" r="3" class="tip"/>
+        <circle cx="${x}" cy="${y}" r="${code === selType ? 19 : 16}" class="badge"/>
+        <text x="${x}" y="${y + 4}" text-anchor="middle">${code}</text>
+      </g>`;
+    })
+    .join("");
+  // 선택 부위 상세
+  const t = typeOf(selType);
+  const { st, key } = info[selType];
+  const metrics =
+    key === "none"
+      ? st.count ? `고장 ${st.count}건 · MTTR ${Math.round(st.mttr)}분 · MTBF 계산엔 2건 이상 필요` : "고장 기록 없음"
+      : `고장 ${st.count}건 · MTTR ${Math.round(st.mttr)}분 · MTBF ${st.mtbfDays.toFixed(1)}일`;
+  const due = key === "none" ? "" : `<div class="pi-due">점검 권장 <b>${fmtDate(st.dueAt, false)}</b> · 고장 예상 <b>${fmtDate(st.nextAt, false)}</b> · ${dueText(st)}</div>`;
+  $("#partInfo").innerHTML = `
+    <div class="pi-head"><span class="pi-badge ${key}">${STATUS_LABEL[key]}</span><span><b>${t.id}</b> ${hl(t.name)}</span></div>
+    <div class="pi-sub">대표 증상: ${escapeHtml(t.symptom)}</div>
+    <div class="pi-sub">${metrics}</div>${due}`;
+}
+function pickPart(code) {
+  const f = $("#recForm");
+  if (!code || f.type.value === code) return;
+  f.type.value = code;
+  onTypeChange();
 }
 
 function updateDuration() {
@@ -160,7 +215,8 @@ function updateDuration() {
 const scoped = () => allRecords().filter((r) => state.eq === "all" || r.eq === state.eq);
 
 function dueText(st) {
-  if (st.status === "done") return `점검 완료 ${fmtDate(st.inspection.end, false)}`;
+  if (st.status === "done")
+    return `점검 완료 ${fmtDate(st.inspection.end, false)}${st.inspection.end > st.dueAt ? " (권장일 지남)" : ""}`;
   return st.daysToDue < 0 ? `${days(st.daysToDue)} 초과` : `${days(st.daysToDue)} 남음`;
 }
 
@@ -225,7 +281,7 @@ function renderCombos(combos) {
     return `<button type="button" class="combo ${key}${selected ? " selected" : ""}" data-eq="${eq.id}" data-type="${t.id}" aria-pressed="${selected}">
       <i class="dot ${key}"></i>
       <div class="c-main">
-        <div class="c-title"><span class="eqno">${shortEq(eq.id)}</span><b>${t.id}</b> ${t.name}</div>
+        <div class="c-title"><span class="eqno">${shortEq(eq.id)}</span><b>${t.id}</b> ${hl(t.name)}</div>
         <div class="c-meta">${metrics}</div>
       </div>
       <div class="c-right">${right}</div>
@@ -244,7 +300,7 @@ function renderRecords(records) {
   $("#listCount").textContent = `${list.length}건`;
   const chip = $("#selChip");
   chip.hidden = !sel;
-  if (sel) chip.innerHTML = `<span>${eqName(sel.eq)} · <b>${sel.type}</b> ${typeOf(sel.type).name}</span><button type="button" id="clearSel" aria-label="선택 해제">전체 보기 ✕</button>`;
+  if (sel) chip.innerHTML = `<span>${eqName(sel.eq)} · <b>${sel.type}</b> ${hl(typeOf(sel.type).name)}</span><button type="button" id="clearSel" aria-label="선택 해제">전체 보기 ✕</button>`;
 
   const items = list.slice(0, state.shown).map((r) => {
     const isRepair = r.kind === "repair";
@@ -255,7 +311,7 @@ function renderRecords(records) {
       <div class="rec-main">
         <div class="rec-title"><span class="kind ${r.kind}">${isRepair ? "수리" : "점검"}</span>${
       sel ? "" : `<span class="eqno">${shortEq(r.eq)}</span>`
-    }<b>${r.type}</b> ${typeOf(r.type).name}${r.virtual ? "" : '<span class="tag">직접 입력</span>'}</div>
+    }<b>${r.type}</b> ${hl(typeOf(r.type).name)}${r.virtual ? "" : '<span class="tag">직접 입력</span>'}</div>
         <div class="rec-sub">${detail} · ${escapeHtml(r.worker)}</div>
       </div>
       <div class="rec-side">
@@ -307,7 +363,7 @@ function showStartupAlert() {
     .map(
       ({ eq, t, st, key }) => `<li class="${key}">
         <i class="dot ${key}"></i>
-        <div class="a-main"><span class="eqno">${shortEq(eq.id)}</span><b>${t.id}</b> ${t.name}
+        <div class="a-main"><span class="eqno">${shortEq(eq.id)}</span><b>${t.id}</b> ${hl(t.name)}
           <div class="a-sub">점검 권장 ${fmtDate(st.dueAt, false)} · 고장 예상 ${fmtDate(st.nextAt, false)} · MTTR ${Math.round(st.mttr)}분</div></div>
         <div class="a-state">${dueText(st)}</div>
       </li>`
@@ -352,6 +408,17 @@ function bindEvents() {
   $("#alertClose").addEventListener("click", () => closeAlert(false));
   $("#alertGo").addEventListener("click", () => closeAlert(true));
   $("#alertDialog").addEventListener("cancel", () => closeAlert(false)); // Esc
+  const pressBox = $("#pressSvg");
+  pressBox.addEventListener("click", (e) => pickPart(e.target.closest("[data-type]")?.dataset.type));
+  pressBox.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      const code = e.target.closest?.("[data-type]")?.dataset.type;
+      if (code) {
+        e.preventDefault();
+        pickPart(code);
+      }
+    }
+  });
   $("#qrBtn").addEventListener("click", openQr);
   $("#qrClose").addEventListener("click", () => $("#qrDialog").close());
   $("#qrDialog").addEventListener("click", (e) => {

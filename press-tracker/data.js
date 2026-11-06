@@ -5,7 +5,7 @@ const EQUIPMENTS = [
   { id: "P1", name: "프레스 #1" },
   { id: "P2", name: "프레스 #2" },
   { id: "P3", name: "프레스 #3" },
-  { id: "P4", name: "프레스 #4" },
+  { id: "P4", name: "프레스 #4", sinceDays: 45 }, // 최근 설치된 설비 → 일부 유형은 데이터 부족
 ];
 
 // 고장 유형 표준 코드 F01~F09 (워크시트 1쪽)
@@ -61,7 +61,8 @@ function generateVirtualData() {
   EQUIPMENTS.forEach((eq, ei) => {
     FAILURE_TYPES.forEach((ft) => {
       const mtbf = ft.mtbfDays * DAY * (0.85 + ei * 0.1); // 설비마다 조금씩 다르게
-      let t = start + rand() * mtbf;
+      const eqStart = eq.sinceDays ? end - eq.sinceDays * DAY : start;
+      let t = eqStart + rand() * mtbf;
       while (t < end) {
         // 현재 MTTR이 워크시트 현재값(95분, 가정) 근처가 되도록 1.05배 보정
         const min = Math.round((ft.repair[0] + rand() * (ft.repair[1] - ft.repair[0])) * 1.05);
@@ -85,7 +86,38 @@ function generateVirtualData() {
       }
     });
   });
+  addVirtualInspections(records, rand, end, () => n++);
   return records;
+}
+
+// 가상 예방 점검 기록: 일부 설비·유형은 권장일 전에 점검(이행), 일부는 권장일이 지난 뒤 점검(늦은 이행)
+function addVirtualInspections(records, rand, end, nextId) {
+  EQUIPMENTS.forEach((eq) =>
+    FAILURE_TYPES.forEach((ft) => {
+      const st = comboStats(records.filter((r) => r.eq === eq.id && r.type === ft.id), end);
+      if (st.insufficient || !st.count) return;
+      const roll = rand();
+      let at;
+      if (roll < 0.12) at = st.last.start + (0.45 + rand() * 0.3) * st.mtbfDays * DAY; // 권장일 전
+      else if (roll < 0.4 && st.dueAt < end - 2 * DAY) at = st.dueAt + (1 + rand() * Math.min(3, (end - st.dueAt) / DAY - 1)) * DAY; // 권장일 후
+      else return;
+      if (at > end - 3 * HOUR) return;
+      const min = Math.round(20 + rand() * 40);
+      records.push({
+        id: "v" + nextId(),
+        kind: "inspect",
+        eq: eq.id,
+        type: ft.id,
+        start: at,
+        end: at + min * 60 * 1000,
+        cause: "",
+        action: INSPECT_ACTIONS[Math.floor(rand() * INSPECT_ACTIONS.length)],
+        parts: "",
+        worker: WORKERS[Math.floor(rand() * WORKERS.length)],
+        virtual: true,
+      });
+    })
+  );
 }
 
 // ---------- 저장소 (가상 데이터 + 직접 입력한 기록) ----------
