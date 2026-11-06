@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>프레스 설비 보전 트래커</title>
-  <link rel="stylesheet" href="style.css?v=4" />
+  <title>5조 설비보전 · 프레스 설비 보전 트래커</title>
+  <link rel="stylesheet" href="style.css?v=7" />
 </head>
 <body>
   <header class="top">
     <div class="top-inner">
       <div>
-        <p class="eyebrow">2팀 설비보전</p>
+        <p class="eyebrow">5조 설비보전</p>
         <h1>프레스 설비 보전 트래커</h1>
       </div>
       <div class="top-actions">
@@ -33,6 +33,7 @@
           <label><input type="radio" name="kind" value="inspect" /><span>예방 점검</span></label>
         </div>
 
+        <h3 class="form-sec"><span>1</span>어디서, 무엇이</h3>
         <div class="row">
           <label>설비
             <select name="eq"></select>
@@ -43,6 +44,7 @@
         </div>
         <p id="typeHint" class="hint"></p>
 
+        <h3 class="form-sec"><span>2</span>언제</h3>
         <div class="row">
           <label><span data-k="startLabel">발생 일시</span>
             <input type="datetime-local" name="start" required />
@@ -53,6 +55,7 @@
         </div>
         <p id="durationHint" class="hint">수리시간이 자동으로 계산됩니다.</p>
 
+        <h3 class="form-sec"><span>3</span>어떻게 조치했나</h3>
         <label data-only="repair">원인
           <input type="text" name="cause" list="causeList" placeholder="목록에서 고르거나 직접 입력" />
           <datalist id="causeList"></datalist>
@@ -95,14 +98,8 @@
             <h2>설비 · 유형별 현황 <span id="comboCount" class="muted"></span></h2>
             <select id="typeFilter" aria-label="고장 유형 필터"></select>
           </div>
-          <div class="legend">
-            <span><i class="dot over"></i>권장일 초과</span>
-            <span><i class="dot soon"></i>7일 이내</span>
-            <span><i class="dot ok"></i>정상</span>
-            <span><i class="dot done"></i>점검 완료</span>
-            <span><i class="dot none"></i>데이터 부족</span>
-          </div>
-          <p class="pane-tip">항목을 누르면 오른쪽 이력이 그 설비·유형으로 걸러집니다.</p>
+          <div id="statusFilter" class="status-filter" role="group" aria-label="상태 필터"></div>
+          <p class="pane-tip">상태를 눌러 걸러 보고, 항목을 누르면 오른쪽 이력이 그 설비·유형으로 걸러집니다.</p>
           <div id="comboList" class="combos scroll"></div>
         </div>
 
@@ -140,6 +137,25 @@
     <button id="resetBtn" class="link">입력 기록 초기화</button>
   </footer>
 
+  <dialog id="alertDialog" class="alert-dialog" aria-labelledby="alertTitle">
+    <div class="alert-top">
+      <div class="alert-icon" aria-hidden="true">!</div>
+      <div>
+        <h2 id="alertTitle">오늘 확인할 긴급 점검</h2>
+        <p id="alertSummary" class="alert-summary"></p>
+      </div>
+    </div>
+    <ul id="alertList" class="alert-list"></ul>
+    <p id="alertMore" class="hint"></p>
+    <div class="alert-actions">
+      <label class="alert-skip"><input type="checkbox" id="alertSkip" /> 오늘 하루 보지 않기</label>
+      <div class="alert-btns">
+        <button type="button" id="alertClose" class="ghost">닫기</button>
+        <button type="button" id="alertGo" class="primary-sm">긴급 항목 보기</button>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="qrDialog" class="qr-dialog" aria-labelledby="qrTitle">
     <div class="qr-head">
       <h2 id="qrTitle">설비 QR</h2>
@@ -152,7 +168,7 @@
 
   <div id="toast" class="toast" role="status"></div>
 
-  <script src="data.js?v=4"></script>
-  <script src="app.js?v=4"></script>
+  <script src="data.js?v=7"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

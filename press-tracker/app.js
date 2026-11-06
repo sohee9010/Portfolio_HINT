@@ -5,7 +5,14 @@ const eqName = (id) => EQUIPMENTS.find((e) => e.id === id)?.name ?? id;
 const typeOf = (id) => FAILURE_TYPES.find((t) => t.id === id);
 const typeLabel = (id) => `${id} ${typeOf(id)?.name ?? ""}`;
 
-const state = { tab: "input", eq: "all", type: "all", kind: "all", shown: 50, sel: null }; // sel: { eq, type }
+const state = { tab: "input", eq: "all", type: "all", kind: "all", shown: 50, sel: null, status: new Set() }; // sel: { eq, type }
+const STATUS = [
+  ["over", "권장일 초과"],
+  ["soon", "7일 이내"],
+  ["ok", "정상"],
+  ["done", "점검 완료"],
+  ["none", "데이터 부족"],
+];
 const shortEq = (id) => eqName(id).replace("프레스 ", "");
 
 // ---------- 포맷 ----------
@@ -191,8 +198,16 @@ function renderKpis(records, combos) {
 }
 
 function renderCombos(combos) {
-  const list = combos
-    .filter((c) => state.type === "all" || c.t.id === state.type)
+  const byType = combos.filter((c) => state.type === "all" || c.t.id === state.type);
+  const counts = Object.fromEntries(STATUS.map(([k]) => [k, byType.filter((c) => c.key === k).length]));
+  $("#statusFilter").innerHTML =
+    `<button type="button" class="sf${state.status.size ? "" : " on"}" data-status="all">전체 <b>${byType.length}</b></button>` +
+    STATUS.map(
+      ([k, label]) =>
+        `<button type="button" class="sf ${k}${state.status.has(k) ? " on" : ""}" data-status="${k}" aria-pressed="${state.status.has(k)}"><i class="dot ${k}"></i>${label} <b>${counts[k]}</b></button>`
+    ).join("");
+  const list = byType
+    .filter((c) => !state.status.size || state.status.has(c.key))
     .sort((a, b) => ORDER[a.key] - ORDER[b.key] || (a.st.daysToDue ?? 0) - (b.st.daysToDue ?? 0));
   $("#comboCount").textContent = `${list.length}개`;
   const rows = list.map(({ eq, t, st, key }) => {
@@ -259,7 +274,9 @@ function renderBoard() {
   const combos = buildCombos(records);
   renderKpis(records, combos);
   renderCombos(combos);
-  renderRecords(records);
+  // 상태 필터가 켜져 있으면 이력도 그 상태의 설비·유형만
+  const visible = state.status.size ? new Set(combos.filter((c) => state.status.has(c.key)).map((c) => c.eq.id + c.t.id)) : null;
+  renderRecords(visible ? records.filter((r) => visible.has(r.eq + r.type)) : records);
 }
 
 // ---------- 공통 ----------
@@ -267,6 +284,49 @@ function render() {
   document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === state.tab));
   document.querySelectorAll(".tab-panel").forEach((p) => p.classList.toggle("active", p.id === "tab-" + state.tab));
   if (state.tab === "board") renderBoard();
+}
+
+// ---------- 시작 알림 팝업 ----------
+const ALERT_KEY = "press-tracker-alert-skip";
+const todayKey = () => toLocalInput(Date.now()).slice(0, 10); // 한국 시간 기준 날짜
+
+function showStartupAlert() {
+  if (localStorage.getItem(ALERT_KEY) === todayKey()) return;
+  const urgent = buildCombos(scoped())
+    .filter((c) => c.key === "over" || c.key === "soon")
+    .sort((a, b) => a.st.daysToDue - b.st.daysToDue);
+  if (!urgent.length) return;
+  const over = urgent.filter((c) => c.key === "over").length;
+  const soon = urgent.length - over;
+  const where = state.eq === "all" ? "전체 설비" : eqName(state.eq);
+  $("#alertSummary").innerHTML =
+    `${where} 기준 <b class="t-over">권장일 초과 ${over}건</b> · <b class="t-soon">7일 이내 ${soon}건</b>`;
+  const TOP = 5;
+  $("#alertList").innerHTML = urgent
+    .slice(0, TOP)
+    .map(
+      ({ eq, t, st, key }) => `<li class="${key}">
+        <i class="dot ${key}"></i>
+        <div class="a-main"><span class="eqno">${shortEq(eq.id)}</span><b>${t.id}</b> ${t.name}
+          <div class="a-sub">점검 권장 ${fmtDate(st.dueAt, false)} · 고장 예상 ${fmtDate(st.nextAt, false)} · MTTR ${Math.round(st.mttr)}분</div></div>
+        <div class="a-state">${dueText(st)}</div>
+      </li>`
+    )
+    .join("");
+  $("#alertMore").textContent = urgent.length > TOP ? `외 ${urgent.length - TOP}건은 목록·요약에서 확인하세요.` : "";
+  $("#alertSkip").checked = false;
+  $("#alertDialog").showModal();
+}
+
+function closeAlert(goToBoard) {
+  if ($("#alertSkip").checked) localStorage.setItem(ALERT_KEY, todayKey());
+  $("#alertDialog").close();
+  if (goToBoard) {
+    state.tab = "board";
+    state.status = new Set(["over", "soon"]);
+    state.sel = null;
+    render();
+  }
 }
 
 function bindEvents() {
@@ -289,6 +349,9 @@ function bindEvents() {
     saveExtraWorkers(loadExtraWorkers().filter((w) => w !== name));
     renderWorkers();
   });
+  $("#alertClose").addEventListener("click", () => closeAlert(false));
+  $("#alertGo").addEventListener("click", () => closeAlert(true));
+  $("#alertDialog").addEventListener("cancel", () => closeAlert(false)); // Esc
   $("#qrBtn").addEventListener("click", openQr);
   $("#qrClose").addEventListener("click", () => $("#qrDialog").close());
   $("#qrDialog").addEventListener("click", (e) => {
@@ -362,6 +425,16 @@ function bindEvents() {
     if (!same && window.matchMedia("(max-width: 900px)").matches)
       $("#selChip").scrollIntoView({ behavior: "smooth", block: "start" });
   });
+  $("#statusFilter").addEventListener("click", (e) => {
+    const btn = e.target.closest(".sf");
+    if (!btn) return;
+    const k = btn.dataset.status;
+    if (k === "all") state.status.clear();
+    else state.status.has(k) ? state.status.delete(k) : state.status.add(k);
+    state.sel = null;
+    state.shown = 50;
+    renderBoard();
+  });
   $("#selChip").addEventListener("click", (e) => {
     if (e.target.id === "clearSel") {
       state.sel = null;
@@ -391,3 +464,4 @@ function bindEvents() {
 setupControls();
 bindEvents();
 render();
+showStartupAlert();
