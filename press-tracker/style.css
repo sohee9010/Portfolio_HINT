@@ -524,3 +524,5 @@ em.kw { font-style: normal; font-weight: 800; color: #c2410c; background: linear
   .viewer, .press-3d { min-height: 380px; }
   .view-bar { flex-wrap: wrap; }
 }
+/* 상태어: 형광펜 하이라이트 없이 글자색·굵기만 */
+em.kw, .combo.over em.kw { background: none; padding: 0; }
