@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>설비 QR 라벨 · 프레스 고장 기록·예측</title>
+  <style>
+    body { margin: 0; font-family: "Pretendard", "Malgun Gothic", system-ui, sans-serif; background: #f4f6f9; color: #1f2937; }
+    header { max-width: 900px; margin: 0 auto; padding: 24px 20px 8px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    h1 { font-size: 20px; margin: 0; }
+    p { margin: 4px 0 0; color: #6b7686; font-size: 13px; }
+    button { background: #1b4f9c; color: #fff; border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 700; cursor: pointer; }
+    .grid { max-width: 900px; margin: 0 auto; padding: 16px 20px 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .label { background: #fff; border: 2px solid #0b2545; border-radius: 14px; padding: 16px; text-align: center; }
+    .label img { width: 100%; max-width: 180px; display: block; margin: 8px auto; }
+    .label .name { font-size: 20px; font-weight: 800; color: #0b2545; }
+    .label .sub { font-size: 12px; color: #6b7686; }
+    @media print {
+      body { background: #fff; }
+      header { display: none; }
+      .label { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>설비 QR 라벨</h1>
+      <p>인쇄해서 각 프레스에 붙이면, 찍었을 때 해당 설비가 선택된 화면이 열립니다.</p>
+    </div>
+    <button onclick="print()">인쇄</button>
+  </header>
+  <div class="grid">
+    <div class="label"><div class="name">프레스 1호기</div><img src="qr/P1.png" alt="프레스 1호기 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div></div>
+    <div class="label"><div class="name">프레스 2호기</div><img src="qr/P2.png" alt="프레스 2호기 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div></div>
+    <div class="label"><div class="name">프레스 3호기</div><img src="qr/P3.png" alt="프레스 3호기 QR" /><div class="sub">찍고 고장 입력 · 이력 · 예측 확인</div></div>
+    <div class="label"><div class="name">전체 설비</div><img src="qr/all.png" alt="전체 설비 QR" /><div class="sub">보전실 · 발표 화면용</div></div>
+  </div>
+</body>
+</html>

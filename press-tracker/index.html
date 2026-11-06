@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>프레스 설비 고장 기록·예측</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <div>
+        <p class="eyebrow">2팀 설비보전</p>
+        <h1>고장 기록 · 예측</h1>
+      </div>
+      <select id="eqFilter" aria-label="설비 선택"></select>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="input" class="active">고장 입력</button>
+      <button role="tab" data-tab="list">고장 목록</button>
+      <button role="tab" data-tab="predict">고장 예측</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 1. 고장 입력 -->
+    <section id="tab-input" class="tab-panel active">
+      <form id="failForm" class="card form">
+        <h2>고장 입력</h2>
+        <label>설비
+          <select name="eq" required></select>
+        </label>
+        <fieldset>
+          <legend>고장 유형</legend>
+          <div id="typeChips" class="chips"></div>
+        </fieldset>
+        <div class="row">
+          <label>고장 발생 시각
+            <input type="datetime-local" name="start" required />
+          </label>
+          <label>수리 완료 시각
+            <input type="datetime-local" name="end" required />
+          </label>
+        </div>
+        <p id="durationHint" class="hint">수리 시간이 자동으로 계산됩니다.</p>
+        <div class="row">
+          <label>조치 내용
+            <select name="action"></select>
+          </label>
+          <label>작업자
+            <input type="text" name="worker" placeholder="예: 김반장" required />
+          </label>
+        </div>
+        <label>메모 (선택)
+          <textarea name="memo" rows="2" placeholder="증상, 교체 부품 등"></textarea>
+        </label>
+        <button type="submit" class="primary">저장</button>
+      </form>
+    </section>
+
+    <!-- 2. 고장 목록 -->
+    <section id="tab-list" class="tab-panel">
+      <div class="card">
+        <h2>유형별 요약</h2>
+        <div class="table-wrap">
+          <table class="summary">
+            <thead>
+              <tr><th>고장 유형</th><th>횟수</th><th>MTTR</th><th>마지막 고장 후</th></tr>
+            </thead>
+            <tbody id="summaryBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="list-head">
+          <h2>고장 기록 <span id="listCount" class="muted"></span></h2>
+          <select id="typeFilter" aria-label="고장 유형 필터"></select>
+        </div>
+        <ul id="recordList" class="records"></ul>
+      </div>
+    </section>
+
+    <!-- 3. 고장 예측 -->
+    <section id="tab-predict" class="tab-panel">
+      <div class="kpis" id="kpis"></div>
+      <div class="card">
+        <h2>다음 고장 예측 <span class="muted">평균 고장 간격(MTBF) 기준</span></h2>
+        <div id="predictList" class="predict"></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h2>유형별 고장 횟수</h2>
+          <div id="chartCount"></div>
+        </div>
+        <div class="card">
+          <h2>유형별 MTTR (분)</h2>
+          <div id="chartMttr"></div>
+        </div>
+      </div>
+      <details class="card formula">
+        <summary>계산 공식 보기</summary>
+        <ul>
+          <li><b>MTTR</b> (평균 수리 시간) = 총 수리 시간 ÷ 고장 횟수</li>
+          <li><b>MTBF</b> (평균 고장 간격) = 총 가동 시간 ÷ 고장 횟수</li>
+          <li><b>가동 시간</b> = 관측 기간 − 고장 정지 시간 (24시간 풀가동 가정)</li>
+          <li><b>가동률</b> = MTBF ÷ (MTBF + MTTR)</li>
+          <li><b>다음 고장 예상</b> = 마지막 고장 수리 완료 시각 + MTBF</li>
+        </ul>
+        <p class="muted">가상 데이터 기반의 평균 예측입니다. 실제 현장에서는 센서 데이터와 딥러닝으로 고도화할 수 있습니다.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>가상 데이터 (최근 90일) + 직접 입력한 기록</span>
+    <button id="resetBtn" class="link">입력 기록 초기화</button>
+  </footer>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
