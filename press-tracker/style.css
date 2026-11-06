@@ -526,3 +526,18 @@ em.kw { font-style: normal; font-weight: 800; color: #c2410c; background: linear
 }
 /* 상태어: 형광펜 하이라이트 없이 글자색·굵기만 */
 em.kw, .combo.over em.kw { background: none; padding: 0; }
+
+/* ---------- 현황 항목: 테두리 없이, 마우스 올리면 반응 ---------- */
+.combo, .combo.over, .combo.soon { border: 0; background: #f6f8fb; transition: background-color .15s, box-shadow .15s, transform .15s; }
+.combo.over { background: #fdf1f1; }
+.combo.soon { background: #fdf7e8; }
+.combo:hover { background: #e9eff7; box-shadow: 0 4px 12px rgba(11, 37, 69, .12); transform: translateY(-1px); }
+.combo.over:hover { background: #fbe2e2; }
+.combo.soon:hover { background: #faedcc; }
+.combo:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(11, 37, 69, .12); }
+.combo:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.combo.selected { outline: 2px solid var(--blue); outline-offset: -2px; background: #e6eefb; box-shadow: 0 4px 12px rgba(27, 79, 156, .18); }
+
+/* 이력 줄도 마우스 올리면 살짝 강조 */
+.records .rec { border-radius: 8px; transition: background-color .15s; padding-left: 6px; padding-right: 6px; }
+.records .rec:hover { background: #f1f4f8; }
